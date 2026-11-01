@@ -1,0 +1,24 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v7
+      - name: Spec matches Tethr's
+        run: curl -fsSL https://raw.githubusercontent.com/tethrtv/tethr/main/spec/tethr/openapi.yaml | diff -u - openapi.yaml
+      - name: Generated code is current
+        run: |
+          Scripts/generate.sh
+          git diff --exit-code
+      - run: swift test
+      - name: Builds for every platform
+        run: |
+          for platform in iOS tvOS visionOS; do
+            xcodebuild build -scheme Tethr -destination "generic/platform=$platform" -quiet
+          done

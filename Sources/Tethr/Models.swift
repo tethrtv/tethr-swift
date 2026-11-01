@@ -1,0 +1,185 @@
+import Foundation
+
+public struct IDs: Hashable, Sendable {
+    public var tethr: Int64?
+    public var tmdb: Int?
+    public var imdb: String?
+    public var tvdb: Int?
+
+    public init(tethr: Int64? = nil, tmdb: Int? = nil, imdb: String? = nil, tvdb: Int? = nil) {
+        self.tethr = tethr
+        self.tmdb = tmdb
+        self.imdb = imdb
+        self.tvdb = tvdb
+    }
+
+    public static func tethr(_ id: Int64) -> IDs { IDs(tethr: id) }
+    public static func tmdb(_ id: Int) -> IDs { IDs(tmdb: id) }
+    public static func imdb(_ id: String) -> IDs { IDs(imdb: id) }
+    public static func tvdb(_ id: Int) -> IDs { IDs(tvdb: id) }
+
+    init(_ ids: Components.Schemas.Ids?) {
+        self.init(tethr: ids?.tethr, tmdb: ids?.tmdb, imdb: ids?.imdb, tvdb: ids?.tvdb)
+    }
+
+    var schema: Components.Schemas.Ids {
+        .init(tethr: tethr, tmdb: tmdb, imdb: imdb, tvdb: tvdb)
+    }
+}
+
+public enum Media: Hashable, Sendable {
+    case movie(IDs)
+    case show(IDs)
+    case season(show: IDs, season: Int)
+    case episode(show: IDs, season: Int, number: Int)
+    case episodeIDs(IDs)
+
+    var schema: Components.Schemas.ItemRef {
+        switch self {
+        case let .movie(ids):
+            .init(_type: .movie, ids: ids.schema)
+        case let .show(ids):
+            .init(_type: .show, ids: ids.schema)
+        case let .season(show, season):
+            .init(_type: .season, show: show.schema, season: season)
+        case let .episode(show, season, number):
+            .init(_type: .episode, show: show.schema, season: season, number: number)
+        case let .episodeIDs(ids):
+            .init(_type: .episode, ids: ids.schema)
+        }
+    }
+
+    init(_ ref: Components.Schemas.ItemRef) {
+        switch ref._type {
+        case .movie:
+            self = .movie(IDs(ref.ids))
+        case .show:
+            self = .show(IDs(ref.ids))
+        case .season:
+            self = .season(show: IDs(ref.show), season: ref.season ?? 0)
+        case .episode:
+            if let season = ref.season, let number = ref.number, ref.show != nil {
+                self = .episode(show: IDs(ref.show), season: season, number: number)
+            } else {
+                self = .episodeIDs(IDs(ref.ids))
+            }
+        }
+    }
+}
+
+public struct Title: Hashable, Sendable {
+    public var ids: IDs
+    public var name: String?
+    public var year: Int?
+}
+
+public struct Episode: Hashable, Sendable {
+    public var ids: IDs
+    public var season: Int
+    public var number: Int
+}
+
+public struct Item: Hashable, Sendable {
+    public enum Kind: String, Hashable, Sendable {
+        case movie, show, season, episode
+    }
+
+    public var kind: Kind
+    public var title: Title
+    public var season: Int?
+    public var episode: Episode?
+
+    init(_ item: Components.Schemas.Item) {
+        kind = Kind(rawValue: item._type.rawValue) ?? .movie
+        title = Title(ids: IDs(item.title.ids), name: item.title.name, year: item.title.year)
+        season = item.season
+        episode = item.episode.map { Episode(ids: IDs($0.ids), season: $0.season, number: $0.number) }
+    }
+}
+
+public struct Profile: Hashable, Sendable {
+    public var id: Int64
+    public var username: String
+    public var name: String
+}
+
+public enum PlaybackEvent: String, Hashable, Sendable {
+    case start, pause, stop
+}
+
+public struct ScrobbleResult: Hashable, Sendable {
+    public enum State: String, Hashable, Sendable {
+        case watching, paused, watched
+    }
+
+    public var state: State
+    public var id: Int64?
+    public var progress: Double
+    public var item: Item
+}
+
+public struct Watch: Hashable, Sendable {
+    public var id: Int64
+    public var watchedAt: Date
+    public var action: String
+    public var item: Item
+}
+
+public struct HistoryPage: Hashable, Sendable {
+    public var watches: [Watch]
+    public var total: Int64
+    public var page: Int
+    public var limit: Int
+
+    public var hasMore: Bool { Int64(page * limit) < total }
+}
+
+public struct ResumePoint: Hashable, Sendable {
+    public var id: Int64
+    public var progress: Double
+    public var pausedAt: Date
+    public var item: Item
+}
+
+public struct Listing: Hashable, Sendable {
+    public var id: Int64
+    public var rank: Int
+    public var listedAt: Date
+    public var notes: String?
+    public var item: Item
+}
+
+public struct Activity: Hashable, Sendable {
+    public var latest: Date
+    public var history: Date
+    public var playback: Date
+    public var watchlist: Date
+}
+
+public struct SyncResult: Hashable, Sendable {
+    public var added: Int
+    public var existing: Int
+    public var notFound: [Media]
+
+    init(_ result: Components.Schemas.SyncResult) {
+        added = result.added
+        existing = result.existing
+        notFound = result.notFound.map(Media.init)
+    }
+}
+
+public struct DeviceCode: Hashable, Sendable {
+    public var userCode: String
+    public var verificationURL: URL
+    public var expiresAt: Date
+    public var interval: Duration
+    var deviceCode: String
+
+    public var formattedCode: String {
+        userCode.count == 8 ? "\(userCode.prefix(4))-\(userCode.suffix(4))" : userCode
+    }
+
+    public var directURL: URL {
+        verificationURL.appending(queryItems: [URLQueryItem(name: "code", value: userCode)])
+    }
+}

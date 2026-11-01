@@ -1,0 +1,22 @@
+generate:
+  - types
+  - client
+accessModifier: internal
+namingStrategy: idiomatic
+filter:
+  operations:
+    - startDeviceSignIn
+    - pollDeviceSignIn
+    - exchangeToken
+    - revokeToken
+    - getProfile
+    - scrobble
+    - listHistory
+    - addHistory
+    - removeWatch
+    - listPlayback
+    - removePlayback
+    - listWatchlist
+    - addToWatchlist
+    - removeFromWatchlist
+    - getActivity
