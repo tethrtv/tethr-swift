@@ -45,10 +45,12 @@ Films and shows can be named by TMDB, IMDb, TVDB or Tethr IDs. Episodes can be n
 ## Reading things back
 
 ```swift
+let next = try await tethr.upNext()            // the next episode of every show in progress
 let page = try await tethr.history(of: .episode)
 let resume = try await tethr.resumePoints()
 let watchlist = try await tethr.watchlist()
 try await tethr.addToWatchlist(.movie(.imdb("tt0816692")))
+try await tethr.rate(.movie(.imdb("tt0816692")), rating: 9)
 let changed = try await tethr.activity()
 ```
 

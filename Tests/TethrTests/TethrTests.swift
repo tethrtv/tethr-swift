@@ -9,6 +9,7 @@ final class FakeServer: ClientTransport, @unchecked Sendable {
     struct Call {
         var method: String
         var path: String
+        var query: String
         var authorization: String?
         var body: String
     }
@@ -23,9 +24,11 @@ final class FakeServer: ClientTransport, @unchecked Sendable {
 
     func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String) async throws -> (HTTPResponse, HTTPBody?) {
         let sent = if let body { try await String(collecting: body, upTo: 1 << 20) } else { "" }
-        let path = String((request.path ?? "").split(separator: "?").first ?? "")
+        let parts = (request.path ?? "").split(separator: "?", maxSplits: 1)
+        let path = String(parts.first ?? "")
+        let query = parts.count > 1 ? String(parts[1]) : ""
         let (status, json) = lock.withLock {
-            calls.append(Call(method: request.method.rawValue, path: path, authorization: request.headerFields[.authorization], body: sent))
+            calls.append(Call(method: request.method.rawValue, path: path, query: query, authorization: request.headerFields[.authorization], body: sent))
             let key = "\(request.method.rawValue) \(path)"
             guard var queue = replies[key], !queue.isEmpty else { return (500, #"{"code":"unexpected","message":"no reply for \#(key)"}"#) }
             let reply = queue.removeFirst()
@@ -157,4 +160,51 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
     #expect(page.hasMore)
     #expect(page.watches.first?.item.title.ids.imdb == "tt0133093")
     #expect(page.watches.first?.watchedAt == Date(timeIntervalSince1970: 1_714_593_600))
+}
+
+@Test func upNext() async throws {
+    let server = FakeServer([
+        "GET /v1/up-next": [(200, #"[{"show":{"ids":{"tethr":1000000010,"tmdb":83867}},"next":{"ids":{"tethr":1000000092,"tmdb":3745383},"season":1,"number":4,"first_aired":"2022-09-28"},"last_watched_at":"2026-11-01T16:12:13.44368Z","aired":24,"watched":1,"resume":{"id":1000000000007,"progress":12.5}}]"#)],
+        "PUT /v1/up-next/hidden/1000000010": [(204, "")],
+    ])
+    let (tethr, _) = signedIn(server)
+    let next = try await tethr.upNext()
+    #expect(next.count == 1)
+    #expect(next[0].next.season == 1 && next[0].next.number == 4)
+    #expect(next[0].next.firstAired == Date(timeIntervalSince1970: 1_664_323_200))
+    #expect(next[0].remaining == 23)
+    #expect(next[0].resume?.progress == 12.5)
+    try await tethr.hideFromUpNext(showID: 1000000010)
+    #expect(server.calls.last?.method == "PUT")
+}
+
+@Test func ratings() async throws {
+    let server = FakeServer([
+        "GET /v1/ratings": [(200, #"[{"id":1000000000020,"rating":9,"rated_at":"2024-05-01T20:00:00Z","item":{"type":"movie","title":{"ids":{"tethr":1000000003,"imdb":"tt0133093"}}}}]"#)],
+        "POST /v1/ratings": [(200, #"{"added":1,"existing":0,"not_found":[{"type":"movie","ids":{"imdb":"tt0816692"}}]}"#)],
+        "DELETE /v1/ratings/1000000000020": [(204, "")],
+    ])
+    let (tethr, _) = signedIn(server)
+    let ratings = try await tethr.ratings(of: .movie, rated: [9, 10])
+    #expect(server.calls[0].query == "type=movie&rating=9,10")
+    #expect(ratings.first?.rating == 9)
+    #expect(ratings.first?.ratedAt == Date(timeIntervalSince1970: 1_714_593_600))
+    #expect(ratings.first?.item.title.ids.imdb == "tt0133093")
+
+    let result = try await tethr.rate([
+        (.episode(show: .tmdb(1396), season: 1, number: 2), 8, Date(timeIntervalSince1970: 1_714_593_600)),
+        (.movie(.imdb("tt0816692")), 11, nil),
+    ])
+    #expect(result.added == 1)
+    #expect(result.notFound == [.movie(.imdb("tt0816692"))])
+    let body = try JSONSerialization.jsonObject(with: Data(server.calls[1].body.utf8)) as? [String: Any]
+    let items = body?["items"] as? [[String: Any]]
+    #expect(items?.map { $0["rating"] as? Int } == [8, 11])
+    #expect(items?[0]["rated_at"] as? String == "2024-05-01T20:00:00Z")
+    #expect(items?[1]["rated_at"] == nil)
+
+    try await tethr.rate(.show(.tmdb(1396)), rating: 10)
+    #expect(server.calls[2].body.contains(#""rating" : 10"#))
+    try await tethr.removeRating(id: 1000000000020)
+    #expect(server.calls.last?.method == "DELETE")
 }

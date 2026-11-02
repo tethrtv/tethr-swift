@@ -385,6 +385,10 @@ internal enum Operations {
         internal struct Input: Sendable, Hashable {
             /// - Remark: Generated from `#/paths/v1/history/GET/query`.
             internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/history/GET/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
                 /// - Remark: Generated from `#/paths/v1/history/GET/query/type`.
                 internal enum _TypePayload: String, Codable, Hashable, Sendable, CaseIterable {
                     case movie = "movie"
@@ -403,16 +407,19 @@ internal enum Operations {
                 /// Creates a new `Query`.
                 ///
                 /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
                 ///   - _type:
                 ///   - titleId: Only watches of this film or show.
                 ///   - page:
                 ///   - limit:
                 internal init(
+                    profileId: Components.Parameters.ProfileId? = nil,
                     _type: Operations.ListHistory.Input.Query._TypePayload? = nil,
                     titleId: Swift.Int64? = nil,
                     page: Swift.Int? = nil,
                     limit: Swift.Int? = nil
                 ) {
+                    self.profileId = profileId
                     self._type = _type
                     self.titleId = titleId
                     self.page = page
@@ -520,6 +527,29 @@ internal enum Operations {
                     }
                 }
             }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/history/get(listHistory)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
             /// Undocumented response.
             ///
             /// A response with a code that is not documented in the OpenAPI document.
@@ -560,6 +590,21 @@ internal enum Operations {
     internal enum AddHistory {
         internal static let id: Swift.String = "addHistory"
         internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/history/POST/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/history/POST/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.AddHistory.Input.Query
             /// - Remark: Generated from `#/paths/v1/history/POST/header`.
             internal struct Headers: Sendable, Hashable {
                 internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AddHistory.AcceptableContentType>]
@@ -581,12 +626,15 @@ internal enum Operations {
             /// Creates a new `Input`.
             ///
             /// - Parameters:
+            ///   - query:
             ///   - headers:
             ///   - body:
             internal init(
+                query: Operations.AddHistory.Input.Query = .init(),
                 headers: Operations.AddHistory.Input.Headers = .init(),
                 body: Operations.AddHistory.Input.Body
             ) {
+                self.query = query
                 self.headers = headers
                 self.body = body
             }
@@ -689,6 +737,29 @@ internal enum Operations {
                     }
                 }
             }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/history/post(addHistory)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
             /// Undocumented response.
             ///
             /// A response with a code that is not documented in the OpenAPI document.
@@ -740,6 +811,21 @@ internal enum Operations {
                 }
             }
             internal var path: Operations.RemoveWatch.Input.Path
+            /// - Remark: Generated from `#/paths/v1/history/{id}/DELETE/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/history/{id}/DELETE/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.RemoveWatch.Input.Query
             /// - Remark: Generated from `#/paths/v1/history/{id}/DELETE/header`.
             internal struct Headers: Sendable, Hashable {
                 internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.RemoveWatch.AcceptableContentType>]
@@ -756,12 +842,15 @@ internal enum Operations {
             ///
             /// - Parameters:
             ///   - path:
+            ///   - query:
             ///   - headers:
             internal init(
                 path: Operations.RemoveWatch.Input.Path,
+                query: Operations.RemoveWatch.Input.Query = .init(),
                 headers: Operations.RemoveWatch.Input.Headers = .init()
             ) {
                 self.path = path
+                self.query = query
                 self.headers = headers
             }
         }
@@ -887,6 +976,10 @@ internal enum Operations {
         internal struct Input: Sendable, Hashable {
             /// - Remark: Generated from `#/paths/v1/playback/GET/query`.
             internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/playback/GET/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
                 /// - Remark: Generated from `#/paths/v1/playback/GET/query/type`.
                 internal enum _TypePayload: String, Codable, Hashable, Sendable, CaseIterable {
                     case movie = "movie"
@@ -897,8 +990,13 @@ internal enum Operations {
                 /// Creates a new `Query`.
                 ///
                 /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
                 ///   - _type:
-                internal init(_type: Operations.ListPlayback.Input.Query._TypePayload? = nil) {
+                internal init(
+                    profileId: Components.Parameters.ProfileId? = nil,
+                    _type: Operations.ListPlayback.Input.Query._TypePayload? = nil
+                ) {
+                    self.profileId = profileId
                     self._type = _type
                 }
             }
@@ -1003,6 +1101,29 @@ internal enum Operations {
                     }
                 }
             }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/playback/get(listPlayback)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
             /// Undocumented response.
             ///
             /// A response with a code that is not documented in the OpenAPI document.
@@ -1054,6 +1175,21 @@ internal enum Operations {
                 }
             }
             internal var path: Operations.RemovePlayback.Input.Path
+            /// - Remark: Generated from `#/paths/v1/playback/{id}/DELETE/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/playback/{id}/DELETE/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.RemovePlayback.Input.Query
             /// - Remark: Generated from `#/paths/v1/playback/{id}/DELETE/header`.
             internal struct Headers: Sendable, Hashable {
                 internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.RemovePlayback.AcceptableContentType>]
@@ -1070,12 +1206,15 @@ internal enum Operations {
             ///
             /// - Parameters:
             ///   - path:
+            ///   - query:
             ///   - headers:
             internal init(
                 path: Operations.RemovePlayback.Input.Path,
+                query: Operations.RemovePlayback.Input.Query = .init(),
                 headers: Operations.RemovePlayback.Input.Headers = .init()
             ) {
                 self.path = path
+                self.query = query
                 self.headers = headers
             }
         }
@@ -1201,6 +1340,10 @@ internal enum Operations {
         internal struct Input: Sendable, Hashable {
             /// - Remark: Generated from `#/paths/v1/watchlist/GET/query`.
             internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/watchlist/GET/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
                 /// - Remark: Generated from `#/paths/v1/watchlist/GET/query/type`.
                 internal enum _TypePayload: String, Codable, Hashable, Sendable, CaseIterable {
                     case movie = "movie"
@@ -1213,8 +1356,13 @@ internal enum Operations {
                 /// Creates a new `Query`.
                 ///
                 /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
                 ///   - _type:
-                internal init(_type: Operations.ListWatchlist.Input.Query._TypePayload? = nil) {
+                internal init(
+                    profileId: Components.Parameters.ProfileId? = nil,
+                    _type: Operations.ListWatchlist.Input.Query._TypePayload? = nil
+                ) {
+                    self.profileId = profileId
                     self._type = _type
                 }
             }
@@ -1319,6 +1467,29 @@ internal enum Operations {
                     }
                 }
             }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/watchlist/get(listWatchlist)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
             /// Undocumented response.
             ///
             /// A response with a code that is not documented in the OpenAPI document.
@@ -1359,6 +1530,21 @@ internal enum Operations {
     internal enum AddToWatchlist {
         internal static let id: Swift.String = "addToWatchlist"
         internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/watchlist/POST/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/watchlist/POST/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.AddToWatchlist.Input.Query
             /// - Remark: Generated from `#/paths/v1/watchlist/POST/header`.
             internal struct Headers: Sendable, Hashable {
                 internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AddToWatchlist.AcceptableContentType>]
@@ -1380,12 +1566,15 @@ internal enum Operations {
             /// Creates a new `Input`.
             ///
             /// - Parameters:
+            ///   - query:
             ///   - headers:
             ///   - body:
             internal init(
+                query: Operations.AddToWatchlist.Input.Query = .init(),
                 headers: Operations.AddToWatchlist.Input.Headers = .init(),
                 body: Operations.AddToWatchlist.Input.Body
             ) {
+                self.query = query
                 self.headers = headers
                 self.body = body
             }
@@ -1488,6 +1677,29 @@ internal enum Operations {
                     }
                 }
             }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/watchlist/post(addToWatchlist)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
             /// Undocumented response.
             ///
             /// A response with a code that is not documented in the OpenAPI document.
@@ -1539,6 +1751,21 @@ internal enum Operations {
                 }
             }
             internal var path: Operations.RemoveFromWatchlist.Input.Path
+            /// - Remark: Generated from `#/paths/v1/watchlist/{id}/DELETE/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/watchlist/{id}/DELETE/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.RemoveFromWatchlist.Input.Query
             /// - Remark: Generated from `#/paths/v1/watchlist/{id}/DELETE/header`.
             internal struct Headers: Sendable, Hashable {
                 internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.RemoveFromWatchlist.AcceptableContentType>]
@@ -1555,12 +1782,15 @@ internal enum Operations {
             ///
             /// - Parameters:
             ///   - path:
+            ///   - query:
             ///   - headers:
             internal init(
                 path: Operations.RemoveFromWatchlist.Input.Path,
+                query: Operations.RemoveFromWatchlist.Input.Query = .init(),
                 headers: Operations.RemoveFromWatchlist.Input.Headers = .init()
             ) {
                 self.path = path
+                self.query = query
                 self.headers = headers
             }
         }
@@ -1686,6 +1916,21 @@ internal enum Operations {
     internal enum GetActivity {
         internal static let id: Swift.String = "getActivity"
         internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/activity/GET/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/activity/GET/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.GetActivity.Input.Query
             /// - Remark: Generated from `#/paths/v1/activity/GET/header`.
             internal struct Headers: Sendable, Hashable {
                 internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.GetActivity.AcceptableContentType>]
@@ -1701,8 +1946,13 @@ internal enum Operations {
             /// Creates a new `Input`.
             ///
             /// - Parameters:
+            ///   - query:
             ///   - headers:
-            internal init(headers: Operations.GetActivity.Input.Headers = .init()) {
+            internal init(
+                query: Operations.GetActivity.Input.Query = .init(),
+                headers: Operations.GetActivity.Input.Headers = .init()
+            ) {
+                self.query = query
                 self.headers = headers
             }
         }
@@ -1776,6 +2026,1106 @@ internal enum Operations {
                     default:
                         try throwUnexpectedResponseStatus(
                             expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/activity/get(getActivity)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// The next episode of every show you're partway through
+    ///
+    /// The first aired, unwatched episode after the latest one watched, or the earliest gap if there's nothing later. Specials and episodes that haven't aired are skipped, and so are hidden shows. Most recently watched shows come first. Shows appear once Tethr has their episode list, usually within a minute of the first watch.
+    ///
+    /// - Remark: HTTP `GET /v1/up-next`.
+    /// - Remark: Generated from `#/paths//v1/up-next/get(getUpNext)`.
+    internal enum GetUpNext {
+        internal static let id: Swift.String = "getUpNext"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/up-next/GET/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/up-next/GET/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.GetUpNext.Input.Query
+            /// - Remark: Generated from `#/paths/v1/up-next/GET/header`.
+            internal struct Headers: Sendable, Hashable {
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.GetUpNext.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                internal init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.GetUpNext.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.GetUpNext.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - query:
+            ///   - headers:
+            internal init(
+                query: Operations.GetUpNext.Input.Query = .init(),
+                headers: Operations.GetUpNext.Input.Headers = .init()
+            ) {
+                self.query = query
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/up-next/GET/responses/200/content`.
+                internal enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/v1/up-next/GET/responses/200/content/application\/json`.
+                    case json([Components.Schemas.UpNextEntry])
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    internal var json: [Components.Schemas.UpNextEntry] {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                internal var body: Operations.GetUpNext.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                internal init(body: Operations.GetUpNext.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// One entry per show
+            ///
+            /// - Remark: Generated from `#/paths//v1/up-next/get(getUpNext)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.GetUpNext.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            internal var ok: Operations.GetUpNext.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/up-next/get(getUpNext)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/up-next/get(getUpNext)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Hide a show from Up next
+    ///
+    /// - Remark: HTTP `PUT /v1/up-next/hidden/{id}`.
+    /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/put(hideFromUpNext)`.
+    internal enum HideFromUpNext {
+        internal static let id: Swift.String = "hideFromUpNext"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/up-next/hidden/{id}/PUT/path`.
+            internal struct Path: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/up-next/hidden/{id}/PUT/path/id`.
+                internal var id: Components.Parameters.Id
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                internal init(id: Components.Parameters.Id) {
+                    self.id = id
+                }
+            }
+            internal var path: Operations.HideFromUpNext.Input.Path
+            /// - Remark: Generated from `#/paths/v1/up-next/hidden/{id}/PUT/header`.
+            internal struct Headers: Sendable, Hashable {
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.HideFromUpNext.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                internal init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.HideFromUpNext.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.HideFromUpNext.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            internal init(
+                path: Operations.HideFromUpNext.Input.Path,
+                headers: Operations.HideFromUpNext.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct NoContent: Sendable, Hashable {
+                /// Creates a new `NoContent`.
+                internal init() {}
+            }
+            /// Hidden
+            ///
+            /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/put(hideFromUpNext)/responses/204`.
+            ///
+            /// HTTP response code: `204 noContent`.
+            case noContent(Operations.HideFromUpNext.Output.NoContent)
+            /// Hidden
+            ///
+            /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/put(hideFromUpNext)/responses/204`.
+            ///
+            /// HTTP response code: `204 noContent`.
+            internal static var noContent: Self {
+                .noContent(.init())
+            }
+            /// The associated value of the enum case if `self` is `.noContent`.
+            ///
+            /// - Throws: An error if `self` is not `.noContent`.
+            /// - SeeAlso: `.noContent`.
+            internal var noContent: Operations.HideFromUpNext.Output.NoContent {
+                get throws {
+                    switch self {
+                    case let .noContent(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "noContent",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/put(hideFromUpNext)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/put(hideFromUpNext)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Put a hidden show back in Up next
+    ///
+    /// - Remark: HTTP `DELETE /v1/up-next/hidden/{id}`.
+    /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/delete(showInUpNext)`.
+    internal enum ShowInUpNext {
+        internal static let id: Swift.String = "showInUpNext"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/up-next/hidden/{id}/DELETE/path`.
+            internal struct Path: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/up-next/hidden/{id}/DELETE/path/id`.
+                internal var id: Components.Parameters.Id
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                internal init(id: Components.Parameters.Id) {
+                    self.id = id
+                }
+            }
+            internal var path: Operations.ShowInUpNext.Input.Path
+            /// - Remark: Generated from `#/paths/v1/up-next/hidden/{id}/DELETE/header`.
+            internal struct Headers: Sendable, Hashable {
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ShowInUpNext.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                internal init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ShowInUpNext.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.ShowInUpNext.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - headers:
+            internal init(
+                path: Operations.ShowInUpNext.Input.Path,
+                headers: Operations.ShowInUpNext.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct NoContent: Sendable, Hashable {
+                /// Creates a new `NoContent`.
+                internal init() {}
+            }
+            /// Back in Up next
+            ///
+            /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/delete(showInUpNext)/responses/204`.
+            ///
+            /// HTTP response code: `204 noContent`.
+            case noContent(Operations.ShowInUpNext.Output.NoContent)
+            /// Back in Up next
+            ///
+            /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/delete(showInUpNext)/responses/204`.
+            ///
+            /// HTTP response code: `204 noContent`.
+            internal static var noContent: Self {
+                .noContent(.init())
+            }
+            /// The associated value of the enum case if `self` is `.noContent`.
+            ///
+            /// - Throws: An error if `self` is not `.noContent`.
+            /// - SeeAlso: `.noContent`.
+            internal var noContent: Operations.ShowInUpNext.Output.NoContent {
+                get throws {
+                    switch self {
+                    case let .noContent(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "noContent",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/delete(showInUpNext)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/delete(showInUpNext)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Ratings, newest first
+    ///
+    /// - Remark: HTTP `GET /v1/ratings`.
+    /// - Remark: Generated from `#/paths//v1/ratings/get(listRatings)`.
+    internal enum ListRatings {
+        internal static let id: Swift.String = "listRatings"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/ratings/GET/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/ratings/GET/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// - Remark: Generated from `#/paths/v1/ratings/GET/query/type`.
+                internal enum _TypePayload: String, Codable, Hashable, Sendable, CaseIterable {
+                    case movie = "movie"
+                    case show = "show"
+                    case season = "season"
+                    case episode = "episode"
+                }
+                /// - Remark: Generated from `#/paths/v1/ratings/GET/query/type`.
+                internal var _type: Operations.ListRatings.Input.Query._TypePayload?
+                /// Only these ratings.
+                ///
+                /// - Remark: Generated from `#/paths/v1/ratings/GET/query/rating`.
+                internal var rating: [Swift.Int]?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///   - _type:
+                ///   - rating: Only these ratings.
+                internal init(
+                    profileId: Components.Parameters.ProfileId? = nil,
+                    _type: Operations.ListRatings.Input.Query._TypePayload? = nil,
+                    rating: [Swift.Int]? = nil
+                ) {
+                    self.profileId = profileId
+                    self._type = _type
+                    self.rating = rating
+                }
+            }
+            internal var query: Operations.ListRatings.Input.Query
+            /// - Remark: Generated from `#/paths/v1/ratings/GET/header`.
+            internal struct Headers: Sendable, Hashable {
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ListRatings.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                internal init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ListRatings.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.ListRatings.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - query:
+            ///   - headers:
+            internal init(
+                query: Operations.ListRatings.Input.Query = .init(),
+                headers: Operations.ListRatings.Input.Headers = .init()
+            ) {
+                self.query = query
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/ratings/GET/responses/200/content`.
+                internal enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/v1/ratings/GET/responses/200/content/application\/json`.
+                    case json([Components.Schemas.Rating])
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    internal var json: [Components.Schemas.Rating] {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                internal var body: Operations.ListRatings.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                internal init(body: Operations.ListRatings.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// Ratings
+            ///
+            /// - Remark: Generated from `#/paths//v1/ratings/get(listRatings)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.ListRatings.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            internal var ok: Operations.ListRatings.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/ratings/get(listRatings)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/ratings/get(listRatings)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Rate films, shows, seasons or episodes from 1 to 10
+    ///
+    /// Rating something again replaces the old rating.
+    ///
+    /// - Remark: HTTP `POST /v1/ratings`.
+    /// - Remark: Generated from `#/paths//v1/ratings/post(rate)`.
+    internal enum Rate {
+        internal static let id: Swift.String = "rate"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/ratings/POST/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/ratings/POST/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.Rate.Input.Query
+            /// - Remark: Generated from `#/paths/v1/ratings/POST/header`.
+            internal struct Headers: Sendable, Hashable {
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.Rate.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                internal init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.Rate.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.Rate.Input.Headers
+            /// - Remark: Generated from `#/paths/v1/ratings/POST/requestBody`.
+            internal enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/ratings/POST/requestBody/content/application\/json`.
+                case json(Components.Schemas.NewRatings)
+            }
+            internal var body: Operations.Rate.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - query:
+            ///   - headers:
+            ///   - body:
+            internal init(
+                query: Operations.Rate.Input.Query = .init(),
+                headers: Operations.Rate.Input.Headers = .init(),
+                body: Operations.Rate.Input.Body
+            ) {
+                self.query = query
+                self.headers = headers
+                self.body = body
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/ratings/POST/responses/200/content`.
+                internal enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/v1/ratings/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.SyncResult)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    internal var json: Components.Schemas.SyncResult {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                internal var body: Operations.Rate.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                internal init(body: Operations.Rate.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// What was rated
+            ///
+            /// - Remark: Generated from `#/paths//v1/ratings/post(rate)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.Rate.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            internal var ok: Operations.Rate.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/ratings/post(rate)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/ratings/post(rate)/responses/400`.
+            ///
+            /// HTTP response code: `400 badRequest`.
+            case badRequest(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.badRequest`.
+            ///
+            /// - Throws: An error if `self` is not `.badRequest`.
+            /// - SeeAlso: `.badRequest`.
+            internal var badRequest: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .badRequest(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "badRequest",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/ratings/post(rate)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Remove one rating
+    ///
+    /// - Remark: HTTP `DELETE /v1/ratings/{id}`.
+    /// - Remark: Generated from `#/paths//v1/ratings/{id}/delete(removeRating)`.
+    internal enum RemoveRating {
+        internal static let id: Swift.String = "removeRating"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/ratings/{id}/DELETE/path`.
+            internal struct Path: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/ratings/{id}/DELETE/path/id`.
+                internal var id: Components.Parameters.Id
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                internal init(id: Components.Parameters.Id) {
+                    self.id = id
+                }
+            }
+            internal var path: Operations.RemoveRating.Input.Path
+            /// - Remark: Generated from `#/paths/v1/ratings/{id}/DELETE/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/ratings/{id}/DELETE/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.RemoveRating.Input.Query
+            /// - Remark: Generated from `#/paths/v1/ratings/{id}/DELETE/header`.
+            internal struct Headers: Sendable, Hashable {
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.RemoveRating.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                internal init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.RemoveRating.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.RemoveRating.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - query:
+            ///   - headers:
+            internal init(
+                path: Operations.RemoveRating.Input.Path,
+                query: Operations.RemoveRating.Input.Query = .init(),
+                headers: Operations.RemoveRating.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.query = query
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct NoContent: Sendable, Hashable {
+                /// Creates a new `NoContent`.
+                internal init() {}
+            }
+            /// Removed
+            ///
+            /// - Remark: Generated from `#/paths//v1/ratings/{id}/delete(removeRating)/responses/204`.
+            ///
+            /// HTTP response code: `204 noContent`.
+            case noContent(Operations.RemoveRating.Output.NoContent)
+            /// Removed
+            ///
+            /// - Remark: Generated from `#/paths//v1/ratings/{id}/delete(removeRating)/responses/204`.
+            ///
+            /// HTTP response code: `204 noContent`.
+            internal static var noContent: Self {
+                .noContent(.init())
+            }
+            /// The associated value of the enum case if `self` is `.noContent`.
+            ///
+            /// - Throws: An error if `self` is not `.noContent`.
+            /// - SeeAlso: `.noContent`.
+            internal var noContent: Operations.RemoveRating.Output.NoContent {
+                get throws {
+                    switch self {
+                    case let .noContent(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "noContent",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/ratings/{id}/delete(removeRating)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/ratings/{id}/delete(removeRating)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
                             response: self
                         )
                     }
