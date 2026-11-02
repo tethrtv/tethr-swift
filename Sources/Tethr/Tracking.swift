@@ -76,6 +76,52 @@ extension Tethr {
         _ = try await unwrapping { try await api.removeFromWatchlist(path: .init(id: id)).noContent }
     }
 
+    public func ratings(of kind: Item.Kind? = nil, rated: [Int] = []) async throws -> [Rating] {
+        let query = Operations.ListRatings.Input.Query(
+            _type: kind.flatMap { .init(rawValue: $0.rawValue) },
+            rating: rated.isEmpty ? nil : rated
+        )
+        let ratings = try await unwrapping { try await api.listRatings(query: query).ok.body.json }
+        return ratings.map { Rating(id: $0.id, rating: $0.rating, ratedAt: $0.ratedAt, item: Item($0.item)) }
+    }
+
+    @discardableResult
+    public func rate(_ media: Media, rating: Int, ratedAt: Date? = nil) async throws -> SyncResult {
+        try await rate([(media, rating, ratedAt)])
+    }
+
+    @discardableResult
+    public func rate(_ ratings: [(Media, Int, Date?)]) async throws -> SyncResult {
+        let body = Components.Schemas.NewRatings(items: ratings.map { .init(item: $0.0.schema, rating: $0.1, ratedAt: $0.2) })
+        return SyncResult(try await unwrapping { try await api.rate(body: .json(body)).ok.body.json })
+    }
+
+    public func removeRating(id: Int64) async throws {
+        _ = try await unwrapping { try await api.removeRating(path: .init(id: id)).noContent }
+    }
+
+    public func upNext() async throws -> [UpNextEntry] {
+        let entries = try await unwrapping { try await api.getUpNext().ok.body.json }
+        return entries.map {
+            UpNextEntry(
+                show: Title(ids: IDs($0.show.ids), name: $0.show.name, year: $0.show.year),
+                next: Episode($0.next),
+                lastWatchedAt: $0.lastWatchedAt,
+                aired: $0.aired,
+                watched: $0.watched,
+                resume: $0.resume.map { UpNextEntry.Resume(id: $0.id, progress: $0.progress) }
+            )
+        }
+    }
+
+    public func hideFromUpNext(showID: Int64) async throws {
+        _ = try await unwrapping { try await api.hideFromUpNext(path: .init(id: showID)).noContent }
+    }
+
+    public func showInUpNext(showID: Int64) async throws {
+        _ = try await unwrapping { try await api.showInUpNext(path: .init(id: showID)).noContent }
+    }
+
     public func activity() async throws -> Activity {
         let a = try await unwrapping { try await api.getActivity().ok.body.json }
         return Activity(latest: a.latest, history: a.history, playback: a.playback, watchlist: a.watchlist)

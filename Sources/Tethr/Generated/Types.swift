@@ -68,6 +68,40 @@ internal protocol APIProtocol: Sendable {
     /// - Remark: HTTP `GET /v1/activity`.
     /// - Remark: Generated from `#/paths//v1/activity/get(getActivity)`.
     func getActivity(_ input: Operations.GetActivity.Input) async throws -> Operations.GetActivity.Output
+    /// The next episode of every show you're partway through
+    ///
+    /// The first aired, unwatched episode after the latest one watched, or the earliest gap if there's nothing later. Specials and episodes that haven't aired are skipped, and so are hidden shows. Most recently watched shows come first. Shows appear once Tethr has their episode list, usually within a minute of the first watch.
+    ///
+    /// - Remark: HTTP `GET /v1/up-next`.
+    /// - Remark: Generated from `#/paths//v1/up-next/get(getUpNext)`.
+    func getUpNext(_ input: Operations.GetUpNext.Input) async throws -> Operations.GetUpNext.Output
+    /// Hide a show from Up next
+    ///
+    /// - Remark: HTTP `PUT /v1/up-next/hidden/{id}`.
+    /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/put(hideFromUpNext)`.
+    func hideFromUpNext(_ input: Operations.HideFromUpNext.Input) async throws -> Operations.HideFromUpNext.Output
+    /// Put a hidden show back in Up next
+    ///
+    /// - Remark: HTTP `DELETE /v1/up-next/hidden/{id}`.
+    /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/delete(showInUpNext)`.
+    func showInUpNext(_ input: Operations.ShowInUpNext.Input) async throws -> Operations.ShowInUpNext.Output
+    /// Ratings, newest first
+    ///
+    /// - Remark: HTTP `GET /v1/ratings`.
+    /// - Remark: Generated from `#/paths//v1/ratings/get(listRatings)`.
+    func listRatings(_ input: Operations.ListRatings.Input) async throws -> Operations.ListRatings.Output
+    /// Rate films, shows, seasons or episodes from 1 to 10
+    ///
+    /// Rating something again replaces the old rating.
+    ///
+    /// - Remark: HTTP `POST /v1/ratings`.
+    /// - Remark: Generated from `#/paths//v1/ratings/post(rate)`.
+    func rate(_ input: Operations.Rate.Input) async throws -> Operations.Rate.Output
+    /// Remove one rating
+    ///
+    /// - Remark: HTTP `DELETE /v1/ratings/{id}`.
+    /// - Remark: Generated from `#/paths//v1/ratings/{id}/delete(removeRating)`.
+    func removeRating(_ input: Operations.RemoveRating.Input) async throws -> Operations.RemoveRating.Output
     /// Start signing in a TV or other device
     ///
     /// Show `user_code` and `verification_url` to the person, then poll `/oauth/device/token` every `interval` seconds. Errors from the `/oauth` endpoints use OAuth's shape, with `error` and `error_description`.
@@ -140,10 +174,12 @@ extension APIProtocol {
     /// - Remark: HTTP `POST /v1/history`.
     /// - Remark: Generated from `#/paths//v1/history/post(addHistory)`.
     internal func addHistory(
+        query: Operations.AddHistory.Input.Query = .init(),
         headers: Operations.AddHistory.Input.Headers = .init(),
         body: Operations.AddHistory.Input.Body
     ) async throws -> Operations.AddHistory.Output {
         try await addHistory(Operations.AddHistory.Input(
+            query: query,
             headers: headers,
             body: body
         ))
@@ -154,10 +190,12 @@ extension APIProtocol {
     /// - Remark: Generated from `#/paths//v1/history/{id}/delete(removeWatch)`.
     internal func removeWatch(
         path: Operations.RemoveWatch.Input.Path,
+        query: Operations.RemoveWatch.Input.Query = .init(),
         headers: Operations.RemoveWatch.Input.Headers = .init()
     ) async throws -> Operations.RemoveWatch.Output {
         try await removeWatch(Operations.RemoveWatch.Input(
             path: path,
+            query: query,
             headers: headers
         ))
     }
@@ -180,10 +218,12 @@ extension APIProtocol {
     /// - Remark: Generated from `#/paths//v1/playback/{id}/delete(removePlayback)`.
     internal func removePlayback(
         path: Operations.RemovePlayback.Input.Path,
+        query: Operations.RemovePlayback.Input.Query = .init(),
         headers: Operations.RemovePlayback.Input.Headers = .init()
     ) async throws -> Operations.RemovePlayback.Output {
         try await removePlayback(Operations.RemovePlayback.Input(
             path: path,
+            query: query,
             headers: headers
         ))
     }
@@ -207,10 +247,12 @@ extension APIProtocol {
     /// - Remark: HTTP `POST /v1/watchlist`.
     /// - Remark: Generated from `#/paths//v1/watchlist/post(addToWatchlist)`.
     internal func addToWatchlist(
+        query: Operations.AddToWatchlist.Input.Query = .init(),
         headers: Operations.AddToWatchlist.Input.Headers = .init(),
         body: Operations.AddToWatchlist.Input.Body
     ) async throws -> Operations.AddToWatchlist.Output {
         try await addToWatchlist(Operations.AddToWatchlist.Input(
+            query: query,
             headers: headers,
             body: body
         ))
@@ -221,10 +263,12 @@ extension APIProtocol {
     /// - Remark: Generated from `#/paths//v1/watchlist/{id}/delete(removeFromWatchlist)`.
     internal func removeFromWatchlist(
         path: Operations.RemoveFromWatchlist.Input.Path,
+        query: Operations.RemoveFromWatchlist.Input.Query = .init(),
         headers: Operations.RemoveFromWatchlist.Input.Headers = .init()
     ) async throws -> Operations.RemoveFromWatchlist.Output {
         try await removeFromWatchlist(Operations.RemoveFromWatchlist.Input(
             path: path,
+            query: query,
             headers: headers
         ))
     }
@@ -234,8 +278,100 @@ extension APIProtocol {
     ///
     /// - Remark: HTTP `GET /v1/activity`.
     /// - Remark: Generated from `#/paths//v1/activity/get(getActivity)`.
-    internal func getActivity(headers: Operations.GetActivity.Input.Headers = .init()) async throws -> Operations.GetActivity.Output {
-        try await getActivity(Operations.GetActivity.Input(headers: headers))
+    internal func getActivity(
+        query: Operations.GetActivity.Input.Query = .init(),
+        headers: Operations.GetActivity.Input.Headers = .init()
+    ) async throws -> Operations.GetActivity.Output {
+        try await getActivity(Operations.GetActivity.Input(
+            query: query,
+            headers: headers
+        ))
+    }
+    /// The next episode of every show you're partway through
+    ///
+    /// The first aired, unwatched episode after the latest one watched, or the earliest gap if there's nothing later. Specials and episodes that haven't aired are skipped, and so are hidden shows. Most recently watched shows come first. Shows appear once Tethr has their episode list, usually within a minute of the first watch.
+    ///
+    /// - Remark: HTTP `GET /v1/up-next`.
+    /// - Remark: Generated from `#/paths//v1/up-next/get(getUpNext)`.
+    internal func getUpNext(
+        query: Operations.GetUpNext.Input.Query = .init(),
+        headers: Operations.GetUpNext.Input.Headers = .init()
+    ) async throws -> Operations.GetUpNext.Output {
+        try await getUpNext(Operations.GetUpNext.Input(
+            query: query,
+            headers: headers
+        ))
+    }
+    /// Hide a show from Up next
+    ///
+    /// - Remark: HTTP `PUT /v1/up-next/hidden/{id}`.
+    /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/put(hideFromUpNext)`.
+    internal func hideFromUpNext(
+        path: Operations.HideFromUpNext.Input.Path,
+        headers: Operations.HideFromUpNext.Input.Headers = .init()
+    ) async throws -> Operations.HideFromUpNext.Output {
+        try await hideFromUpNext(Operations.HideFromUpNext.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// Put a hidden show back in Up next
+    ///
+    /// - Remark: HTTP `DELETE /v1/up-next/hidden/{id}`.
+    /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/delete(showInUpNext)`.
+    internal func showInUpNext(
+        path: Operations.ShowInUpNext.Input.Path,
+        headers: Operations.ShowInUpNext.Input.Headers = .init()
+    ) async throws -> Operations.ShowInUpNext.Output {
+        try await showInUpNext(Operations.ShowInUpNext.Input(
+            path: path,
+            headers: headers
+        ))
+    }
+    /// Ratings, newest first
+    ///
+    /// - Remark: HTTP `GET /v1/ratings`.
+    /// - Remark: Generated from `#/paths//v1/ratings/get(listRatings)`.
+    internal func listRatings(
+        query: Operations.ListRatings.Input.Query = .init(),
+        headers: Operations.ListRatings.Input.Headers = .init()
+    ) async throws -> Operations.ListRatings.Output {
+        try await listRatings(Operations.ListRatings.Input(
+            query: query,
+            headers: headers
+        ))
+    }
+    /// Rate films, shows, seasons or episodes from 1 to 10
+    ///
+    /// Rating something again replaces the old rating.
+    ///
+    /// - Remark: HTTP `POST /v1/ratings`.
+    /// - Remark: Generated from `#/paths//v1/ratings/post(rate)`.
+    internal func rate(
+        query: Operations.Rate.Input.Query = .init(),
+        headers: Operations.Rate.Input.Headers = .init(),
+        body: Operations.Rate.Input.Body
+    ) async throws -> Operations.Rate.Output {
+        try await rate(Operations.Rate.Input(
+            query: query,
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Remove one rating
+    ///
+    /// - Remark: HTTP `DELETE /v1/ratings/{id}`.
+    /// - Remark: Generated from `#/paths//v1/ratings/{id}/delete(removeRating)`.
+    internal func removeRating(
+        path: Operations.RemoveRating.Input.Path,
+        query: Operations.RemoveRating.Input.Query = .init(),
+        headers: Operations.RemoveRating.Input.Headers = .init()
+    ) async throws -> Operations.RemoveRating.Output {
+        try await removeRating(Operations.RemoveRating.Input(
+            path: path,
+            query: query,
+            headers: headers
+        ))
     }
     /// Start signing in a TV or other device
     ///

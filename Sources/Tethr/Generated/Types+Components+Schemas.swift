@@ -295,25 +295,31 @@ extension Components {
             internal var season: Swift.Int
             /// - Remark: Generated from `#/components/schemas/Episode/number`.
             internal var number: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/Episode/first_aired`.
+            internal var firstAired: Swift.String?
             /// Creates a new `Episode`.
             ///
             /// - Parameters:
             ///   - ids:
             ///   - season:
             ///   - number:
+            ///   - firstAired:
             internal init(
                 ids: Components.Schemas.Ids,
                 season: Swift.Int,
-                number: Swift.Int
+                number: Swift.Int,
+                firstAired: Swift.String? = nil
             ) {
                 self.ids = ids
                 self.season = season
                 self.number = number
+                self.firstAired = firstAired
             }
             internal enum CodingKeys: String, CodingKey {
                 case ids
                 case season
                 case number
+                case firstAired = "first_aired"
             }
         }
         /// - Remark: Generated from `#/components/schemas/Item`.
@@ -744,6 +750,165 @@ extension Components {
                 case history
                 case playback
                 case watchlist
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/UpNextEntry`.
+        internal struct UpNextEntry: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/UpNextEntry/show`.
+            internal var show: Components.Schemas.Title
+            /// - Remark: Generated from `#/components/schemas/UpNextEntry/next`.
+            internal var next: Components.Schemas.Episode
+            /// - Remark: Generated from `#/components/schemas/UpNextEntry/last_watched_at`.
+            internal var lastWatchedAt: Foundation.Date
+            /// Episodes aired so far, not counting specials.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UpNextEntry/aired`.
+            internal var aired: Swift.Int
+            /// How many of those have been watched.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UpNextEntry/watched`.
+            internal var watched: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/UpNextEntry/resume`.
+            internal var resume: Components.Schemas.Resume?
+            /// Creates a new `UpNextEntry`.
+            ///
+            /// - Parameters:
+            ///   - show:
+            ///   - next:
+            ///   - lastWatchedAt:
+            ///   - aired: Episodes aired so far, not counting specials.
+            ///   - watched: How many of those have been watched.
+            ///   - resume:
+            internal init(
+                show: Components.Schemas.Title,
+                next: Components.Schemas.Episode,
+                lastWatchedAt: Foundation.Date,
+                aired: Swift.Int,
+                watched: Swift.Int,
+                resume: Components.Schemas.Resume? = nil
+            ) {
+                self.show = show
+                self.next = next
+                self.lastWatchedAt = lastWatchedAt
+                self.aired = aired
+                self.watched = watched
+                self.resume = resume
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case show
+                case next
+                case lastWatchedAt = "last_watched_at"
+                case aired
+                case watched
+                case resume
+            }
+        }
+        /// Where the next episode was paused, if it was started.
+        ///
+        /// - Remark: Generated from `#/components/schemas/Resume`.
+        internal struct Resume: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/Resume/id`.
+            internal var id: Swift.Int64
+            /// - Remark: Generated from `#/components/schemas/Resume/progress`.
+            internal var progress: Swift.Double
+            /// Creates a new `Resume`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - progress:
+            internal init(
+                id: Swift.Int64,
+                progress: Swift.Double
+            ) {
+                self.id = id
+                self.progress = progress
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case id
+                case progress
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/Rating`.
+        internal struct Rating: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/Rating/id`.
+            internal var id: Swift.Int64
+            /// - Remark: Generated from `#/components/schemas/Rating/rating`.
+            internal var rating: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/Rating/rated_at`.
+            internal var ratedAt: Foundation.Date
+            /// - Remark: Generated from `#/components/schemas/Rating/item`.
+            internal var item: Components.Schemas.Item
+            /// Creates a new `Rating`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - rating:
+            ///   - ratedAt:
+            ///   - item:
+            internal init(
+                id: Swift.Int64,
+                rating: Swift.Int,
+                ratedAt: Foundation.Date,
+                item: Components.Schemas.Item
+            ) {
+                self.id = id
+                self.rating = rating
+                self.ratedAt = ratedAt
+                self.item = item
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case id
+                case rating
+                case ratedAt = "rated_at"
+                case item
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/NewRatings`.
+        internal struct NewRatings: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/NewRatings/ItemsPayload`.
+            internal struct ItemsPayloadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/NewRatings/ItemsPayload/item`.
+                internal var item: Components.Schemas.ItemRef
+                /// - Remark: Generated from `#/components/schemas/NewRatings/ItemsPayload/rating`.
+                internal var rating: Swift.Int
+                /// Left out, it's now.
+                ///
+                /// - Remark: Generated from `#/components/schemas/NewRatings/ItemsPayload/rated_at`.
+                internal var ratedAt: Foundation.Date?
+                /// Creates a new `ItemsPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - item:
+                ///   - rating:
+                ///   - ratedAt: Left out, it's now.
+                internal init(
+                    item: Components.Schemas.ItemRef,
+                    rating: Swift.Int,
+                    ratedAt: Foundation.Date? = nil
+                ) {
+                    self.item = item
+                    self.rating = rating
+                    self.ratedAt = ratedAt
+                }
+                internal enum CodingKeys: String, CodingKey {
+                    case item
+                    case rating
+                    case ratedAt = "rated_at"
+                }
+            }
+            /// - Remark: Generated from `#/components/schemas/NewRatings/items`.
+            internal typealias ItemsPayload = [Components.Schemas.NewRatings.ItemsPayloadPayload]
+            /// - Remark: Generated from `#/components/schemas/NewRatings/items`.
+            internal var items: Components.Schemas.NewRatings.ItemsPayload
+            /// Creates a new `NewRatings`.
+            ///
+            /// - Parameters:
+            ///   - items:
+            internal init(items: Components.Schemas.NewRatings.ItemsPayload) {
+                self.items = items
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case items
             }
         }
     }

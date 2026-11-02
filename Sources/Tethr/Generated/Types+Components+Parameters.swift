@@ -8,5 +8,9 @@ extension Components {
     internal enum Parameters {
         /// - Remark: Generated from `#/components/parameters/Id`.
         internal typealias Id = Swift.Int64
+        /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+        ///
+        /// - Remark: Generated from `#/components/parameters/ProfileId`.
+        internal typealias ProfileId = Swift.Int64
     }
 }

@@ -31,8 +31,16 @@ func againstAServer() async throws {
     #expect(added.added + added.existing == 1)
     let listing = try #require(try await tethr.watchlist(of: .movie).first { $0.item.title.ids.imdb == "tt0816692" })
     try await tethr.removeFromWatchlist(id: listing.id)
+    let rated = try await tethr.rate(.movie(.imdb("tt0816692")), rating: 9)
+    #expect(rated.added + rated.existing == 1)
+    let rating = try #require(try await tethr.ratings(of: .movie, rated: [9]).first { $0.item.title.ids.imdb == "tt0816692" })
+    try await tethr.removeRating(id: rating.id)
     try await tethr.removeWatch(id: try #require(watched.id))
     #expect(try await tethr.history().total == before.total)
+
+    for entry in try await tethr.upNext() {
+        print("up next: show \(entry.show.ids.tmdb ?? 0) S\(entry.next.season)E\(entry.next.number), \(entry.remaining) left")
+    }
 
     let activity = try await tethr.activity()
     #expect(activity.latest >= activity.history)

@@ -77,6 +77,14 @@ public struct Episode: Hashable, Sendable {
     public var ids: IDs
     public var season: Int
     public var number: Int
+    public var firstAired: Date?
+
+    init(_ episode: Components.Schemas.Episode) {
+        ids = IDs(episode.ids)
+        season = episode.season
+        number = episode.number
+        firstAired = episode.firstAired.flatMap { try? Date($0, strategy: Date.ISO8601FormatStyle().year().month().day()) }
+    }
 }
 
 public struct Item: Hashable, Sendable {
@@ -93,7 +101,7 @@ public struct Item: Hashable, Sendable {
         kind = Kind(rawValue: item._type.rawValue) ?? .movie
         title = Title(ids: IDs(item.title.ids), name: item.title.name, year: item.title.year)
         season = item.season
-        episode = item.episode.map { Episode(ids: IDs($0.ids), season: $0.season, number: $0.number) }
+        episode = item.episode.map(Episode.init)
     }
 }
 
@@ -147,6 +155,29 @@ public struct Listing: Hashable, Sendable {
     public var listedAt: Date
     public var notes: String?
     public var item: Item
+}
+
+public struct Rating: Hashable, Sendable {
+    public var id: Int64
+    public var rating: Int
+    public var ratedAt: Date
+    public var item: Item
+}
+
+public struct UpNextEntry: Hashable, Sendable {
+    public struct Resume: Hashable, Sendable {
+        public var id: Int64
+        public var progress: Double
+    }
+
+    public var show: Title
+    public var next: Episode
+    public var lastWatchedAt: Date
+    public var aired: Int
+    public var watched: Int
+    public var resume: Resume?
+
+    public var remaining: Int { aired - watched }
 }
 
 public struct Activity: Hashable, Sendable {
