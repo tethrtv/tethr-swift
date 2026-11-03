@@ -70,6 +70,7 @@ public enum Media: Hashable, Sendable {
 public struct Title: Hashable, Sendable {
     public var ids: IDs
     public var name: String?
+    public var originalName: String?
     public var year: Int?
 }
 
@@ -99,7 +100,7 @@ public struct Item: Hashable, Sendable {
 
     init(_ item: Components.Schemas.Item) {
         kind = Kind(rawValue: item._type.rawValue) ?? .movie
-        title = Title(ids: IDs(item.title.ids), name: item.title.name, year: item.title.year)
+        title = Title(ids: IDs(item.title.ids), name: item.title.name, originalName: item.title.originalName, year: item.title.year)
         season = item.season
         episode = item.episode.map(Episode.init)
     }
@@ -185,6 +186,7 @@ public struct Activity: Hashable, Sendable {
     public var history: Date
     public var playback: Date
     public var watchlist: Date
+    public var ratings: Date
 }
 
 public struct SyncResult: Hashable, Sendable {

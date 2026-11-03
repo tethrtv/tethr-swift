@@ -99,12 +99,13 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
 @Test func refreshesBeforeExpiry() async throws {
     let server = FakeServer([
         "POST /oauth/token": [(200, tokensJSON("a2"))],
-        "GET /v1/activity": [(200, #"{"latest":"2026-11-01T16:11:17.94962Z","history":"2026-11-01T16:11:17Z","playback":"2026-11-01T16:11:17.865078Z","watchlist":"2026-11-01T16:11:17.94962Z"}"#)],
+        "GET /v1/activity": [(200, #"{"latest":"2026-11-01T16:11:17.94962Z","history":"2026-11-01T16:11:17Z","playback":"2026-11-01T16:11:17.865078Z","watchlist":"2026-11-01T16:11:17.94962Z","ratings":"2026-11-01T16:10:02Z"}"#)],
     ])
     let (tethr, _) = signedIn(server, expiresIn: 60)
     let activity = try await tethr.activity()
     #expect(server.calls.map(\.path) == ["/oauth/token", "/v1/activity"])
     #expect(activity.latest > activity.history)
+    #expect(activity.ratings < activity.history)
 }
 
 @Test func failedRefreshSignsOut() async throws {
@@ -153,12 +154,15 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
 
 @Test func historyPages() async throws {
     let server = FakeServer([
-        "GET /v1/history": [(200, #"{"items":[{"id":1000000000000,"watched_at":"2024-05-01T20:00:00Z","action":"watch","item":{"type":"movie","title":{"ids":{"tethr":1000000003,"imdb":"tt0133093"}}}}],"total":3,"page":1,"limit":1}"#)],
+        "GET /v1/history": [(200, #"{"items":[{"id":1000000000000,"watched_at":"2024-05-01T20:00:00Z","action":"watch","item":{"type":"movie","title":{"ids":{"tethr":1000000003,"imdb":"tt0133093"},"name":"The Matrix","original_name":"The Matrix","year":1999}}}],"total":3,"page":1,"limit":1}"#)],
     ])
     let (tethr, _) = signedIn(server)
     let page = try await tethr.history(of: .movie, limit: 1)
     #expect(page.hasMore)
     #expect(page.watches.first?.item.title.ids.imdb == "tt0133093")
+    #expect(page.watches.first?.item.title.name == "The Matrix")
+    #expect(page.watches.first?.item.title.originalName == "The Matrix")
+    #expect(page.watches.first?.item.title.year == 1999)
     #expect(page.watches.first?.watchedAt == Date(timeIntervalSince1970: 1_714_593_600))
 }
 
@@ -193,13 +197,13 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
 
     let result = try await tethr.rate([
         (.episode(show: .tmdb(1396), season: 1, number: 2), 8, Date(timeIntervalSince1970: 1_714_593_600)),
-        (.movie(.imdb("tt0816692")), 11, nil),
+        (.movie(.imdb("tt0816692")), 7, nil),
     ])
     #expect(result.added == 1)
     #expect(result.notFound == [.movie(.imdb("tt0816692"))])
     let body = try JSONSerialization.jsonObject(with: Data(server.calls[1].body.utf8)) as? [String: Any]
     let items = body?["items"] as? [[String: Any]]
-    #expect(items?.map { $0["rating"] as? Int } == [8, 11])
+    #expect(items?.map { $0["rating"] as? Int } == [8, 7])
     #expect(items?[0]["rated_at"] as? String == "2024-05-01T20:00:00Z")
     #expect(items?[1]["rated_at"] == nil)
 
