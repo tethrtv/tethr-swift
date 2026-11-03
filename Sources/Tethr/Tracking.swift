@@ -104,7 +104,7 @@ extension Tethr {
         let entries = try await unwrapping { try await api.getUpNext().ok.body.json }
         return entries.map {
             UpNextEntry(
-                show: Title(ids: IDs($0.show.ids), name: $0.show.name, year: $0.show.year),
+                show: Title(ids: IDs($0.show.ids), name: $0.show.name, originalName: $0.show.originalName, year: $0.show.year),
                 next: Episode($0.next),
                 lastWatchedAt: $0.lastWatchedAt,
                 aired: $0.aired,
@@ -124,6 +124,6 @@ extension Tethr {
 
     public func activity() async throws -> Activity {
         let a = try await unwrapping { try await api.getActivity().ok.body.json }
-        return Activity(latest: a.latest, history: a.history, playback: a.playback, watchlist: a.watchlist)
+        return Activity(latest: a.latest, history: a.history, playback: a.playback, watchlist: a.watchlist, ratings: a.ratings)
     }
 }

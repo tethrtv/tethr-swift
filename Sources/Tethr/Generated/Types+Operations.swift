@@ -2778,7 +2778,7 @@ internal enum Operations {
     }
     /// Rate films, shows, seasons or episodes from 1 to 10
     ///
-    /// Rating something again replaces the old rating.
+    /// Rating something again replaces the old rating. The same score again counts as existing.
     ///
     /// - Remark: HTTP `POST /v1/ratings`.
     /// - Remark: Generated from `#/paths//v1/ratings/post(rate)`.

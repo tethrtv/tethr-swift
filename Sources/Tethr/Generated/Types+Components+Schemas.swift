@@ -260,30 +260,40 @@ extension Components {
         internal struct Title: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/Title/ids`.
             internal var ids: Components.Schemas.Ids
-            /// From Wikidata. Missing until Tethr has one; fetch names and artwork from TMDB yourself.
+            /// The English title, from Wikidata. Usually there within a minute of Tethr first seeing the title, but missing for anything Wikidata doesn't have. Fetch artwork and anything else from TMDB yourself.
             ///
             /// - Remark: Generated from `#/components/schemas/Title/name`.
             internal var name: Swift.String?
+            /// The title in its original language, from Wikidata.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Title/original_name`.
+            internal var originalName: Swift.String?
+            /// The year of first release or broadcast, from Wikidata.
+            ///
             /// - Remark: Generated from `#/components/schemas/Title/year`.
             internal var year: Swift.Int?
             /// Creates a new `Title`.
             ///
             /// - Parameters:
             ///   - ids:
-            ///   - name: From Wikidata. Missing until Tethr has one; fetch names and artwork from TMDB yourself.
-            ///   - year:
+            ///   - name: The English title, from Wikidata. Usually there within a minute of Tethr first seeing the title, but missing for anything Wikidata doesn't have. Fetch artwork and anything else from TMDB yourself.
+            ///   - originalName: The title in its original language, from Wikidata.
+            ///   - year: The year of first release or broadcast, from Wikidata.
             internal init(
                 ids: Components.Schemas.Ids,
                 name: Swift.String? = nil,
+                originalName: Swift.String? = nil,
                 year: Swift.Int? = nil
             ) {
                 self.ids = ids
                 self.name = name
+                self.originalName = originalName
                 self.year = year
             }
             internal enum CodingKeys: String, CodingKey {
                 case ids
                 case name
+                case originalName = "original_name"
                 case year
             }
         }
@@ -727,6 +737,8 @@ extension Components {
             internal var playback: Foundation.Date
             /// - Remark: Generated from `#/components/schemas/Activity/watchlist`.
             internal var watchlist: Foundation.Date
+            /// - Remark: Generated from `#/components/schemas/Activity/ratings`.
+            internal var ratings: Foundation.Date
             /// Creates a new `Activity`.
             ///
             /// - Parameters:
@@ -734,22 +746,26 @@ extension Components {
             ///   - history:
             ///   - playback:
             ///   - watchlist:
+            ///   - ratings:
             internal init(
                 latest: Foundation.Date,
                 history: Foundation.Date,
                 playback: Foundation.Date,
-                watchlist: Foundation.Date
+                watchlist: Foundation.Date,
+                ratings: Foundation.Date
             ) {
                 self.latest = latest
                 self.history = history
                 self.playback = playback
                 self.watchlist = watchlist
+                self.ratings = ratings
             }
             internal enum CodingKeys: String, CodingKey {
                 case latest
                 case history
                 case playback
                 case watchlist
+                case ratings
             }
         }
         /// - Remark: Generated from `#/components/schemas/UpNextEntry`.
