@@ -260,6 +260,10 @@ extension Components {
         internal struct Title: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/Title/ids`.
             internal var ids: Components.Schemas.Ids
+            /// The name and year, such as `breaking-bad-2008`, once Wikidata has both, and `t-` with the Tethr ID until then. It doesn't change once set, and the `t-` form always works.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Title/slug`.
+            internal var slug: Swift.String?
             /// The English title, from Wikidata. Usually there within a minute of Tethr first seeing the title, but missing for anything Wikidata doesn't have. Fetch artwork and anything else from TMDB yourself.
             ///
             /// - Remark: Generated from `#/components/schemas/Title/name`.
@@ -272,29 +276,41 @@ extension Components {
             ///
             /// - Remark: Generated from `#/components/schemas/Title/year`.
             internal var year: Swift.Int?
+            /// From Wikidata. For a show, roughly how long an episode runs.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Title/runtime_minutes`.
+            internal var runtimeMinutes: Swift.Int?
             /// Creates a new `Title`.
             ///
             /// - Parameters:
             ///   - ids:
+            ///   - slug: The name and year, such as `breaking-bad-2008`, once Wikidata has both, and `t-` with the Tethr ID until then. It doesn't change once set, and the `t-` form always works.
             ///   - name: The English title, from Wikidata. Usually there within a minute of Tethr first seeing the title, but missing for anything Wikidata doesn't have. Fetch artwork and anything else from TMDB yourself.
             ///   - originalName: The title in its original language, from Wikidata.
             ///   - year: The year of first release or broadcast, from Wikidata.
+            ///   - runtimeMinutes: From Wikidata. For a show, roughly how long an episode runs.
             internal init(
                 ids: Components.Schemas.Ids,
+                slug: Swift.String? = nil,
                 name: Swift.String? = nil,
                 originalName: Swift.String? = nil,
-                year: Swift.Int? = nil
+                year: Swift.Int? = nil,
+                runtimeMinutes: Swift.Int? = nil
             ) {
                 self.ids = ids
+                self.slug = slug
                 self.name = name
                 self.originalName = originalName
                 self.year = year
+                self.runtimeMinutes = runtimeMinutes
             }
             internal enum CodingKeys: String, CodingKey {
                 case ids
+                case slug
                 case name
                 case originalName = "original_name"
                 case year
+                case runtimeMinutes = "runtime_minutes"
             }
         }
         /// - Remark: Generated from `#/components/schemas/Episode`.
@@ -819,7 +835,7 @@ extension Components {
                 case resume
             }
         }
-        /// Where the next episode was paused, if it was started.
+        /// Where it was paused, if it was started.
         ///
         /// - Remark: Generated from `#/components/schemas/Resume`.
         internal struct Resume: Codable, Hashable, Sendable {
@@ -842,6 +858,211 @@ extension Components {
             internal enum CodingKeys: String, CodingKey {
                 case id
                 case progress
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/TitleDetail`.
+        internal struct TitleDetail: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/type`.
+            internal enum _TypePayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case movie = "movie"
+                case show = "show"
+            }
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/type`.
+            internal var _type: Components.Schemas.TitleDetail._TypePayload
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/title`.
+            internal var title: Components.Schemas.Title
+            /// Plays of the film, newest first. Always empty for a show.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/watches`.
+            internal var watches: [Components.Schemas.Play]
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/resume`.
+            internal var resume: Components.Schemas.Resume?
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/rating`.
+            internal var rating: Components.Schemas.TitleRating?
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/listing`.
+            internal var listing: Components.Schemas.TitleListing?
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/seasons`.
+            internal var seasons: [Components.Schemas.SeasonDetail]?
+            /// Creates a new `TitleDetail`.
+            ///
+            /// - Parameters:
+            ///   - _type:
+            ///   - title:
+            ///   - watches: Plays of the film, newest first. Always empty for a show.
+            ///   - resume:
+            ///   - rating:
+            ///   - listing:
+            ///   - seasons:
+            internal init(
+                _type: Components.Schemas.TitleDetail._TypePayload,
+                title: Components.Schemas.Title,
+                watches: [Components.Schemas.Play],
+                resume: Components.Schemas.Resume? = nil,
+                rating: Components.Schemas.TitleRating? = nil,
+                listing: Components.Schemas.TitleListing? = nil,
+                seasons: [Components.Schemas.SeasonDetail]? = nil
+            ) {
+                self._type = _type
+                self.title = title
+                self.watches = watches
+                self.resume = resume
+                self.rating = rating
+                self.listing = listing
+                self.seasons = seasons
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case _type = "type"
+                case title
+                case watches
+                case resume
+                case rating
+                case listing
+                case seasons
+            }
+        }
+        /// Your rating of the film or show itself.
+        ///
+        /// - Remark: Generated from `#/components/schemas/TitleRating`.
+        internal struct TitleRating: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/TitleRating/id`.
+            internal var id: Swift.Int64
+            /// - Remark: Generated from `#/components/schemas/TitleRating/rating`.
+            internal var rating: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/TitleRating/rated_at`.
+            internal var ratedAt: Foundation.Date
+            /// Creates a new `TitleRating`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - rating:
+            ///   - ratedAt:
+            internal init(
+                id: Swift.Int64,
+                rating: Swift.Int,
+                ratedAt: Foundation.Date
+            ) {
+                self.id = id
+                self.rating = rating
+                self.ratedAt = ratedAt
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case id
+                case rating
+                case ratedAt = "rated_at"
+            }
+        }
+        /// Set when the film or show itself is on your watchlist.
+        ///
+        /// - Remark: Generated from `#/components/schemas/TitleListing`.
+        internal struct TitleListing: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/TitleListing/id`.
+            internal var id: Swift.Int64
+            /// - Remark: Generated from `#/components/schemas/TitleListing/listed_at`.
+            internal var listedAt: Foundation.Date
+            /// Creates a new `TitleListing`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - listedAt:
+            internal init(
+                id: Swift.Int64,
+                listedAt: Foundation.Date
+            ) {
+                self.id = id
+                self.listedAt = listedAt
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case id
+                case listedAt = "listed_at"
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/SeasonDetail`.
+        internal struct SeasonDetail: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/SeasonDetail/number`.
+            internal var number: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/SeasonDetail/episodes`.
+            internal var episodes: [Components.Schemas.EpisodeDetail]
+            /// Creates a new `SeasonDetail`.
+            ///
+            /// - Parameters:
+            ///   - number:
+            ///   - episodes:
+            internal init(
+                number: Swift.Int,
+                episodes: [Components.Schemas.EpisodeDetail]
+            ) {
+                self.number = number
+                self.episodes = episodes
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case number
+                case episodes
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/EpisodeDetail`.
+        internal struct EpisodeDetail: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/EpisodeDetail/episode`.
+            internal var episode: Components.Schemas.Episode
+            /// Newest first.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EpisodeDetail/watches`.
+            internal var watches: [Components.Schemas.Play]
+            /// - Remark: Generated from `#/components/schemas/EpisodeDetail/resume`.
+            internal var resume: Components.Schemas.Resume?
+            /// Creates a new `EpisodeDetail`.
+            ///
+            /// - Parameters:
+            ///   - episode:
+            ///   - watches: Newest first.
+            ///   - resume:
+            internal init(
+                episode: Components.Schemas.Episode,
+                watches: [Components.Schemas.Play],
+                resume: Components.Schemas.Resume? = nil
+            ) {
+                self.episode = episode
+                self.watches = watches
+                self.resume = resume
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case episode
+                case watches
+                case resume
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/Play`.
+        internal struct Play: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/Play/id`.
+            internal var id: Swift.Int64
+            /// - Remark: Generated from `#/components/schemas/Play/watched_at`.
+            internal var watchedAt: Foundation.Date
+            /// - Remark: Generated from `#/components/schemas/Play/action`.
+            internal enum ActionPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case scrobble = "scrobble"
+                case checkin = "checkin"
+                case watch = "watch"
+            }
+            /// - Remark: Generated from `#/components/schemas/Play/action`.
+            internal var action: Components.Schemas.Play.ActionPayload
+            /// Creates a new `Play`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - watchedAt:
+            ///   - action:
+            internal init(
+                id: Swift.Int64,
+                watchedAt: Foundation.Date,
+                action: Components.Schemas.Play.ActionPayload
+            ) {
+                self.id = id
+                self.watchedAt = watchedAt
+                self.action = action
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case id
+                case watchedAt = "watched_at"
+                case action
             }
         }
         /// - Remark: Generated from `#/components/schemas/Rating`.

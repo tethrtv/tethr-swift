@@ -104,7 +104,7 @@ extension Tethr {
         let entries = try await unwrapping { try await api.getUpNext().ok.body.json }
         return entries.map {
             UpNextEntry(
-                show: Title(ids: IDs($0.show.ids), name: $0.show.name, originalName: $0.show.originalName, year: $0.show.year),
+                show: Title($0.show),
                 next: Episode($0.next),
                 lastWatchedAt: $0.lastWatchedAt,
                 aired: $0.aired,
@@ -112,6 +112,20 @@ extension Tethr {
                 resume: $0.resume.map { UpNextEntry.Resume(id: $0.id, progress: $0.progress) }
             )
         }
+    }
+
+    public func title(_ slug: String) async throws -> TitleDetail {
+        TitleDetail(try await unwrapping { try await api.getTitle(path: .init(id: slug)).ok.body.json })
+    }
+
+    public func title(id: Int64) async throws -> TitleDetail {
+        try await title(String(id))
+    }
+
+    public func search(_ words: String, of kind: Item.Kind? = nil) async throws -> [Item] {
+        let query = Operations.Search.Input.Query(q: words, _type: kind.flatMap { .init(rawValue: $0.rawValue) })
+        let items = try await unwrapping { try await api.search(query: query).ok.body.json }
+        return items.map(Item.init)
     }
 
     public func hideFromUpNext(showID: Int64) async throws {

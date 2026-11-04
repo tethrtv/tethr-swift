@@ -212,3 +212,32 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
     try await tethr.removeRating(id: 1000000000020)
     #expect(server.calls.last?.method == "DELETE")
 }
+
+@Test func titleDetail() async throws {
+    let server = FakeServer([
+        "GET /v1/titles/breaking-bad-2008": [(200, #"{"type":"show","title":{"ids":{"tethr":1000000000,"tmdb":1396},"slug":"breaking-bad-2008","name":"Breaking Bad","year":2008,"runtime_minutes":47},"watches":[],"rating":{"id":1000000000020,"rating":9,"rated_at":"2024-05-01T20:00:00Z"},"seasons":[{"number":1,"episodes":[{"episode":{"ids":{"tethr":1000000001},"season":1,"number":1,"first_aired":"2008-01-20"},"watches":[{"id":1000000000001,"watched_at":"2024-05-01T20:00:00Z","action":"scrobble"}]},{"episode":{"ids":{"tethr":1000000002},"season":1,"number":2},"watches":[],"resume":{"id":1000000000007,"progress":38}}]}]}"#)],
+        "GET /v1/titles/no-such-show-1999": [(404, #"{"code":"not_found","message":"No such title"}"#)],
+    ])
+    let (tethr, _) = signedIn(server)
+    let show = try await tethr.title("breaking-bad-2008")
+    #expect(show.kind == .show)
+    #expect(show.title.slug == "breaking-bad-2008")
+    #expect(show.title.runtimeMinutes == 47)
+    #expect(show.rating?.rating == 9)
+    #expect(show.listing == nil)
+    #expect(show.seasons.first?.episodes.map(\.watched) == [true, false])
+    #expect(show.seasons.first?.episodes.last?.resume?.progress == 38)
+    #expect(show.seasons.first?.episodes.first?.watches.first?.action == "scrobble")
+    await #expect(throws: TethrError.notFound("No such title")) { try await tethr.title("no-such-show-1999") }
+}
+
+@Test func search() async throws {
+    let server = FakeServer([
+        "GET /v1/search": [(200, #"[{"type":"movie","title":{"ids":{"tethr":1000000003,"tmdb":27205},"slug":"inception-2010","name":"Inception","year":2010}}]"#)],
+    ])
+    let (tethr, _) = signedIn(server)
+    let found = try await tethr.search("in", of: .movie)
+    #expect(server.calls[0].query == "q=in&type=movie")
+    #expect(found.first?.title.slug == "inception-2010")
+    #expect(found.first?.kind == .movie)
+}

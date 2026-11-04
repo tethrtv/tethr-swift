@@ -85,6 +85,20 @@ internal protocol APIProtocol: Sendable {
     /// - Remark: HTTP `DELETE /v1/up-next/hidden/{id}`.
     /// - Remark: Generated from `#/paths//v1/up-next/hidden/{id}/delete(showInUpNext)`.
     func showInUpNext(_ input: Operations.ShowInUpNext.Input) async throws -> Operations.ShowInUpNext.Output
+    /// A film or show, with what you've watched, rated and listed
+    ///
+    /// `id` is a Tethr ID or a slug. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
+    ///
+    /// - Remark: HTTP `GET /v1/titles/{id}`.
+    /// - Remark: Generated from `#/paths//v1/titles/{id}/get(getTitle)`.
+    func getTitle(_ input: Operations.GetTitle.Input) async throws -> Operations.GetTitle.Output
+    /// Search the films and shows you've watched, rated or listed
+    ///
+    /// Matches English and original names. Names that start with the words come first. Up to 20 results.
+    ///
+    /// - Remark: HTTP `GET /v1/search`.
+    /// - Remark: Generated from `#/paths//v1/search/get(search)`.
+    func search(_ input: Operations.Search.Input) async throws -> Operations.Search.Output
     /// Ratings, newest first
     ///
     /// - Remark: HTTP `GET /v1/ratings`.
@@ -325,6 +339,38 @@ extension APIProtocol {
     ) async throws -> Operations.ShowInUpNext.Output {
         try await showInUpNext(Operations.ShowInUpNext.Input(
             path: path,
+            headers: headers
+        ))
+    }
+    /// A film or show, with what you've watched, rated and listed
+    ///
+    /// `id` is a Tethr ID or a slug. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
+    ///
+    /// - Remark: HTTP `GET /v1/titles/{id}`.
+    /// - Remark: Generated from `#/paths//v1/titles/{id}/get(getTitle)`.
+    internal func getTitle(
+        path: Operations.GetTitle.Input.Path,
+        query: Operations.GetTitle.Input.Query = .init(),
+        headers: Operations.GetTitle.Input.Headers = .init()
+    ) async throws -> Operations.GetTitle.Output {
+        try await getTitle(Operations.GetTitle.Input(
+            path: path,
+            query: query,
+            headers: headers
+        ))
+    }
+    /// Search the films and shows you've watched, rated or listed
+    ///
+    /// Matches English and original names. Names that start with the words come first. Up to 20 results.
+    ///
+    /// - Remark: HTTP `GET /v1/search`.
+    /// - Remark: Generated from `#/paths//v1/search/get(search)`.
+    internal func search(
+        query: Operations.Search.Input.Query,
+        headers: Operations.Search.Input.Headers = .init()
+    ) async throws -> Operations.Search.Output {
+        try await search(Operations.Search.Input(
+            query: query,
             headers: headers
         ))
     }
