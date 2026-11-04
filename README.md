@@ -52,11 +52,13 @@ let watchlist = try await tethr.watchlist()
 try await tethr.addToWatchlist(.movie(.imdb("tt0816692")))
 try await tethr.rate(.movie(.imdb("tt0816692")), rating: 9)
 let changed = try await tethr.activity()
+let show = try await tethr.title("breaking-bad-2008") // every episode, with your plays, rating and watchlist entry
+let found = try await tethr.search("break")    // films and shows you've watched, rated or listed
 ```
 
 `activity()` is cheap. Poll it and only fetch lists whose time has moved on.
 
-Tethr only returns IDs and numbers. Fetch names and artwork from TMDB with your own key.
+Tethr returns IDs, numbers, and names and years from Wikidata. Fetch artwork and anything else from TMDB with your own key.
 
 ## Working on it
 

@@ -26,3 +26,5 @@ filter:
     - listRatings
     - rate
     - removeRating
+    - getTitle
+    - search

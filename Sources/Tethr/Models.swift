@@ -69,9 +69,20 @@ public enum Media: Hashable, Sendable {
 
 public struct Title: Hashable, Sendable {
     public var ids: IDs
+    public var slug: String?
     public var name: String?
     public var originalName: String?
     public var year: Int?
+    public var runtimeMinutes: Int?
+
+    init(_ title: Components.Schemas.Title) {
+        ids = IDs(title.ids)
+        slug = title.slug
+        name = title.name
+        originalName = title.originalName
+        year = title.year
+        runtimeMinutes = title.runtimeMinutes
+    }
 }
 
 public struct Episode: Hashable, Sendable {
@@ -100,7 +111,7 @@ public struct Item: Hashable, Sendable {
 
     init(_ item: Components.Schemas.Item) {
         kind = Kind(rawValue: item._type.rawValue) ?? .movie
-        title = Title(ids: IDs(item.title.ids), name: item.title.name, originalName: item.title.originalName, year: item.title.year)
+        title = Title(item.title)
         season = item.season
         episode = item.episode.map(Episode.init)
     }
@@ -132,6 +143,75 @@ public struct Watch: Hashable, Sendable {
     public var watchedAt: Date
     public var action: String
     public var item: Item
+}
+
+public struct Play: Hashable, Sendable {
+    public var id: Int64
+    public var watchedAt: Date
+    public var action: String
+
+    init(_ play: Components.Schemas.Play) {
+        id = play.id
+        watchedAt = play.watchedAt
+        action = play.action.rawValue
+    }
+}
+
+public struct TitleDetail: Hashable, Sendable {
+    public struct Resume: Hashable, Sendable {
+        public var id: Int64
+        public var progress: Double
+    }
+
+    public struct Rated: Hashable, Sendable {
+        public var id: Int64
+        public var rating: Int
+        public var ratedAt: Date
+    }
+
+    public struct Listed: Hashable, Sendable {
+        public var id: Int64
+        public var listedAt: Date
+    }
+
+    public struct Season: Hashable, Sendable {
+        public var number: Int
+        public var episodes: [EpisodeState]
+    }
+
+    public struct EpisodeState: Hashable, Sendable {
+        public var episode: Episode
+        public var watches: [Play]
+        public var resume: Resume?
+
+        public var watched: Bool { !watches.isEmpty }
+    }
+
+    public var kind: Item.Kind
+    public var title: Title
+    public var watches: [Play]
+    public var resume: Resume?
+    public var rating: Rated?
+    public var listing: Listed?
+    public var seasons: [Season]
+
+    init(_ d: Components.Schemas.TitleDetail) {
+        kind = d._type == .movie ? .movie : .show
+        title = Title(d.title)
+        watches = d.watches.map(Play.init)
+        resume = d.resume.map { Resume(id: $0.id, progress: $0.progress) }
+        rating = d.rating.map { Rated(id: $0.id, rating: $0.rating, ratedAt: $0.ratedAt) }
+        listing = d.listing.map { Listed(id: $0.id, listedAt: $0.listedAt) }
+        seasons = (d.seasons ?? []).map { season in
+            Season(number: season.number, episodes: season.episodes.map { e in
+                EpisodeState(
+                    episode: Episode(e.episode),
+                    watches: e.watches.map(Play.init),
+                    resume: e.resume.map { Resume(id: $0.id, progress: $0.progress) }
+                )
+            })
+        }
+    }
 }
 
 public struct HistoryPage: Hashable, Sendable {
