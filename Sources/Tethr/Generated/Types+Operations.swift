@@ -2581,7 +2581,7 @@ internal enum Operations {
     }
     /// A film or show, with what you've watched, rated and listed
     ///
-    /// `id` is a Tethr ID or a slug. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
+    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
     ///
     /// - Remark: HTTP `GET /v1/titles/{id}`.
     /// - Remark: Generated from `#/paths//v1/titles/{id}/get(getTitle)`.
@@ -2607,12 +2607,24 @@ internal enum Operations {
                 ///
                 /// - Remark: Generated from `#/paths/v1/titles/{id}/GET/query/profile_id`.
                 internal var profileId: Components.Parameters.ProfileId?
+                /// - Remark: Generated from `#/paths/v1/titles/{id}/GET/query/type`.
+                internal enum _TypePayload: String, Codable, Hashable, Sendable, CaseIterable {
+                    case movie = "movie"
+                    case show = "show"
+                }
+                /// - Remark: Generated from `#/paths/v1/titles/{id}/GET/query/type`.
+                internal var _type: Operations.GetTitle.Input.Query._TypePayload?
                 /// Creates a new `Query`.
                 ///
                 /// - Parameters:
                 ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
-                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                ///   - _type:
+                internal init(
+                    profileId: Components.Parameters.ProfileId? = nil,
+                    _type: Operations.GetTitle.Input.Query._TypePayload? = nil
+                ) {
                     self.profileId = profileId
+                    self._type = _type
                 }
             }
             internal var query: Operations.GetTitle.Input.Query
