@@ -87,7 +87,7 @@ internal protocol APIProtocol: Sendable {
     func showInUpNext(_ input: Operations.ShowInUpNext.Input) async throws -> Operations.ShowInUpNext.Output
     /// A film or show, with what you've watched, rated and listed
     ///
-    /// `id` is a Tethr ID or a slug. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
+    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
     ///
     /// - Remark: HTTP `GET /v1/titles/{id}`.
     /// - Remark: Generated from `#/paths//v1/titles/{id}/get(getTitle)`.
@@ -344,7 +344,7 @@ extension APIProtocol {
     }
     /// A film or show, with what you've watched, rated and listed
     ///
-    /// `id` is a Tethr ID or a slug. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
+    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
     ///
     /// - Remark: HTTP `GET /v1/titles/{id}`.
     /// - Remark: Generated from `#/paths//v1/titles/{id}/get(getTitle)`.

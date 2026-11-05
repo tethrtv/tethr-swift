@@ -1646,7 +1646,7 @@ internal struct Client: APIProtocol {
     }
     /// A film or show, with what you've watched, rated and listed
     ///
-    /// `id` is a Tethr ID or a slug. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
+    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
     ///
     /// - Remark: HTTP `GET /v1/titles/{id}`.
     /// - Remark: Generated from `#/paths//v1/titles/{id}/get(getTitle)`.
@@ -1672,6 +1672,13 @@ internal struct Client: APIProtocol {
                     explode: true,
                     name: "profile_id",
                     value: input.query.profileId
+                )
+                try converter.setQueryItemAsURI(
+                    in: &request,
+                    style: .form,
+                    explode: true,
+                    name: "type",
+                    value: input.query._type
                 )
                 converter.setAcceptHeader(
                     in: &request.headerFields,
