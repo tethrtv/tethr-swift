@@ -99,7 +99,7 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
 @Test func refreshesBeforeExpiry() async throws {
     let server = FakeServer([
         "POST /oauth/token": [(200, tokensJSON("a2"))],
-        "GET /v1/activity": [(200, #"{"latest":"2026-11-01T16:11:17.94962Z","history":"2026-11-01T16:11:17Z","playback":"2026-11-01T16:11:17.865078Z","watchlist":"2026-11-01T16:11:17.94962Z","ratings":"2026-11-01T16:10:02Z"}"#)],
+        "GET /v1/activity": [(200, #"{"latest":"2026-11-01T16:11:17.94962Z","history":"2026-11-01T16:11:17Z","playback":"2026-11-01T16:11:17.865078Z","watchlist":"2026-11-01T16:11:17.94962Z","ratings":"2026-11-01T16:10:02Z","lists":"2026-11-01T16:09:00Z"}"#)],
     ])
     let (tethr, _) = signedIn(server, expiresIn: 60)
     let activity = try await tethr.activity()
