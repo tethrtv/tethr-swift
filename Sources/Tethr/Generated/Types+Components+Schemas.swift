@@ -323,6 +323,8 @@ extension Components {
             internal var number: Swift.Int
             /// - Remark: Generated from `#/components/schemas/Episode/first_aired`.
             internal var firstAired: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Episode/order`.
+            internal var order: Components.Schemas.OrderNumber?
             /// Creates a new `Episode`.
             ///
             /// - Parameters:
@@ -330,22 +332,51 @@ extension Components {
             ///   - season:
             ///   - number:
             ///   - firstAired:
+            ///   - order:
             internal init(
                 ids: Components.Schemas.Ids,
                 season: Swift.Int,
                 number: Swift.Int,
-                firstAired: Swift.String? = nil
+                firstAired: Swift.String? = nil,
+                order: Components.Schemas.OrderNumber? = nil
             ) {
                 self.ids = ids
                 self.season = season
                 self.number = number
                 self.firstAired = firstAired
+                self.order = order
             }
             internal enum CodingKeys: String, CodingKey {
                 case ids
                 case season
                 case number
                 case firstAired = "first_aired"
+                case order
+            }
+        }
+        /// The episode's season and number in the episode order picked for the show, when they differ from aired order. Given in Up next and title details.
+        ///
+        /// - Remark: Generated from `#/components/schemas/OrderNumber`.
+        internal struct OrderNumber: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/OrderNumber/season`.
+            internal var season: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/OrderNumber/number`.
+            internal var number: Swift.Int
+            /// Creates a new `OrderNumber`.
+            ///
+            /// - Parameters:
+            ///   - season:
+            ///   - number:
+            internal init(
+                season: Swift.Int,
+                number: Swift.Int
+            ) {
+                self.season = season
+                self.number = number
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case season
+                case number
             }
         }
         /// - Remark: Generated from `#/components/schemas/Item`.
@@ -881,6 +912,12 @@ extension Components {
             internal var rating: Components.Schemas.TitleRating?
             /// - Remark: Generated from `#/components/schemas/TitleDetail/listing`.
             internal var listing: Components.Schemas.TitleListing?
+            /// The TMDB episode group the show follows for this profile. Left out, it's aired order.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/episode_order`.
+            internal var episodeOrder: Swift.String?
+            /// Numbered in the show's episode order, with specials last. Episodes the order leaves out aren't listed.
+            ///
             /// - Remark: Generated from `#/components/schemas/TitleDetail/seasons`.
             internal var seasons: [Components.Schemas.SeasonDetail]?
             /// Creates a new `TitleDetail`.
@@ -892,7 +929,8 @@ extension Components {
             ///   - resume:
             ///   - rating:
             ///   - listing:
-            ///   - seasons:
+            ///   - episodeOrder: The TMDB episode group the show follows for this profile. Left out, it's aired order.
+            ///   - seasons: Numbered in the show's episode order, with specials last. Episodes the order leaves out aren't listed.
             internal init(
                 _type: Components.Schemas.TitleDetail._TypePayload,
                 title: Components.Schemas.Title,
@@ -900,6 +938,7 @@ extension Components {
                 resume: Components.Schemas.Resume? = nil,
                 rating: Components.Schemas.TitleRating? = nil,
                 listing: Components.Schemas.TitleListing? = nil,
+                episodeOrder: Swift.String? = nil,
                 seasons: [Components.Schemas.SeasonDetail]? = nil
             ) {
                 self._type = _type
@@ -908,6 +947,7 @@ extension Components {
                 self.resume = resume
                 self.rating = rating
                 self.listing = listing
+                self.episodeOrder = episodeOrder
                 self.seasons = seasons
             }
             internal enum CodingKeys: String, CodingKey {
@@ -917,6 +957,7 @@ extension Components {
                 case resume
                 case rating
                 case listing
+                case episodeOrder = "episode_order"
                 case seasons
             }
         }
