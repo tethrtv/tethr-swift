@@ -354,7 +354,7 @@ extension Components {
                 case order
             }
         }
-        /// The episode's season and number in the episode order picked for the show, when they differ from aired order. Given in Up next and title details.
+        /// The episode's season and number in the episode order the profile picked for the show, when they differ from aired order.
         ///
         /// - Remark: Generated from `#/components/schemas/OrderNumber`.
         internal struct OrderNumber: Codable, Hashable, Sendable {
