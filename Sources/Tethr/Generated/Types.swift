@@ -70,7 +70,7 @@ internal protocol APIProtocol: Sendable {
     func getActivity(_ input: Operations.GetActivity.Input) async throws -> Operations.GetActivity.Output
     /// The next episode of every show you're partway through
     ///
-    /// The first aired, unwatched episode after the latest one watched, or the earliest gap if there's nothing later. Specials and episodes that haven't aired are skipped, and so are hidden shows. Most recently watched shows come first. Shows appear once Tethr has their episode list, usually within a minute of the first watch.
+    /// The first aired, unwatched episode after the latest one watched, or the earliest gap if there's nothing later, in the episode order picked for the show. Specials and episodes that haven't aired are skipped, and so are hidden shows. Most recently watched shows come first. Shows appear once Tethr has their episode list, usually within a minute of the first watch.
     ///
     /// - Remark: HTTP `GET /v1/up-next`.
     /// - Remark: Generated from `#/paths//v1/up-next/get(getUpNext)`.
@@ -87,7 +87,7 @@ internal protocol APIProtocol: Sendable {
     func showInUpNext(_ input: Operations.ShowInUpNext.Input) async throws -> Operations.ShowInUpNext.Output
     /// A film or show, with what you've watched, rated and listed
     ///
-    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
+    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season in its episode order with specials last.
     ///
     /// - Remark: HTTP `GET /v1/titles/{id}`.
     /// - Remark: Generated from `#/paths//v1/titles/{id}/get(getTitle)`.
@@ -303,7 +303,7 @@ extension APIProtocol {
     }
     /// The next episode of every show you're partway through
     ///
-    /// The first aired, unwatched episode after the latest one watched, or the earliest gap if there's nothing later. Specials and episodes that haven't aired are skipped, and so are hidden shows. Most recently watched shows come first. Shows appear once Tethr has their episode list, usually within a minute of the first watch.
+    /// The first aired, unwatched episode after the latest one watched, or the earliest gap if there's nothing later, in the episode order picked for the show. Specials and episodes that haven't aired are skipped, and so are hidden shows. Most recently watched shows come first. Shows appear once Tethr has their episode list, usually within a minute of the first watch.
     ///
     /// - Remark: HTTP `GET /v1/up-next`.
     /// - Remark: Generated from `#/paths//v1/up-next/get(getUpNext)`.
@@ -344,7 +344,7 @@ extension APIProtocol {
     }
     /// A film or show, with what you've watched, rated and listed
     ///
-    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season with specials last.
+    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season in its episode order with specials last.
     ///
     /// - Remark: HTTP `GET /v1/titles/{id}`.
     /// - Remark: Generated from `#/paths//v1/titles/{id}/get(getTitle)`.
