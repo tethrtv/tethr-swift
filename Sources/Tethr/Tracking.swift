@@ -138,6 +138,6 @@ extension Tethr {
 
     public func activity() async throws -> Activity {
         let a = try await unwrapping { try await api.getActivity().ok.body.json }
-        return Activity(latest: a.latest, history: a.history, playback: a.playback, watchlist: a.watchlist, ratings: a.ratings)
+        return Activity(latest: a.latest, history: a.history, playback: a.playback, watchlist: a.watchlist, ratings: a.ratings, lists: a.lists)
     }
 }

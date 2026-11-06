@@ -267,6 +267,7 @@ public struct Activity: Hashable, Sendable {
     public var playback: Date
     public var watchlist: Date
     public var ratings: Date
+    public var lists: Date
 }
 
 public struct SyncResult: Hashable, Sendable {

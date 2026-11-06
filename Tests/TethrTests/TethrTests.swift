@@ -106,6 +106,7 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
     #expect(server.calls.map(\.path) == ["/oauth/token", "/v1/activity"])
     #expect(activity.latest > activity.history)
     #expect(activity.ratings < activity.history)
+    #expect(activity.lists < activity.ratings)
 }
 
 @Test func failedRefreshSignsOut() async throws {
