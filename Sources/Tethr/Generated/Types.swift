@@ -61,7 +61,7 @@ internal protocol APIProtocol: Sendable {
     /// - Remark: HTTP `DELETE /v1/watchlist/{id}`.
     /// - Remark: Generated from `#/paths//v1/watchlist/{id}/delete(removeFromWatchlist)`.
     func removeFromWatchlist(_ input: Operations.RemoveFromWatchlist.Input) async throws -> Operations.RemoveFromWatchlist.Output
-    /// When history, playback and the watchlist last changed
+    /// When history, playback, the watchlist, ratings and lists last changed
     ///
     /// Cheap to call. Poll this and only fetch the lists whose time has moved on.
     ///
@@ -286,7 +286,7 @@ extension APIProtocol {
             headers: headers
         ))
     }
-    /// When history, playback and the watchlist last changed
+    /// When history, playback, the watchlist, ratings and lists last changed
     ///
     /// Cheap to call. Poll this and only fetch the lists whose time has moved on.
     ///

@@ -786,6 +786,10 @@ extension Components {
             internal var watchlist: Foundation.Date
             /// - Remark: Generated from `#/components/schemas/Activity/ratings`.
             internal var ratings: Foundation.Date
+            /// When any list in the household last changed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Activity/lists`.
+            internal var lists: Foundation.Date
             /// Creates a new `Activity`.
             ///
             /// - Parameters:
@@ -794,18 +798,21 @@ extension Components {
             ///   - playback:
             ///   - watchlist:
             ///   - ratings:
+            ///   - lists: When any list in the household last changed.
             internal init(
                 latest: Foundation.Date,
                 history: Foundation.Date,
                 playback: Foundation.Date,
                 watchlist: Foundation.Date,
-                ratings: Foundation.Date
+                ratings: Foundation.Date,
+                lists: Foundation.Date
             ) {
                 self.latest = latest
                 self.history = history
                 self.playback = playback
                 self.watchlist = watchlist
                 self.ratings = ratings
+                self.lists = lists
             }
             internal enum CodingKeys: String, CodingKey {
                 case latest
@@ -813,6 +820,7 @@ extension Components {
                 case playback
                 case watchlist
                 case ratings
+                case lists
             }
         }
         /// - Remark: Generated from `#/components/schemas/UpNextEntry`.
@@ -912,6 +920,10 @@ extension Components {
             internal var rating: Components.Schemas.TitleRating?
             /// - Remark: Generated from `#/components/schemas/TitleDetail/listing`.
             internal var listing: Components.Schemas.TitleListing?
+            /// Your own lists the film or show itself is on.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/lists`.
+            internal var lists: [Components.Schemas.TitleInList]?
             /// The TMDB episode group the show follows for this profile. Left out, it's aired order.
             ///
             /// - Remark: Generated from `#/components/schemas/TitleDetail/episode_order`.
@@ -929,6 +941,7 @@ extension Components {
             ///   - resume:
             ///   - rating:
             ///   - listing:
+            ///   - lists: Your own lists the film or show itself is on.
             ///   - episodeOrder: The TMDB episode group the show follows for this profile. Left out, it's aired order.
             ///   - seasons: Numbered in the show's episode order, with specials last. Episodes the order leaves out aren't listed.
             internal init(
@@ -938,6 +951,7 @@ extension Components {
                 resume: Components.Schemas.Resume? = nil,
                 rating: Components.Schemas.TitleRating? = nil,
                 listing: Components.Schemas.TitleListing? = nil,
+                lists: [Components.Schemas.TitleInList]? = nil,
                 episodeOrder: Swift.String? = nil,
                 seasons: [Components.Schemas.SeasonDetail]? = nil
             ) {
@@ -947,6 +961,7 @@ extension Components {
                 self.resume = resume
                 self.rating = rating
                 self.listing = listing
+                self.lists = lists
                 self.episodeOrder = episodeOrder
                 self.seasons = seasons
             }
@@ -957,6 +972,7 @@ extension Components {
                 case resume
                 case rating
                 case listing
+                case lists
                 case episodeOrder = "episode_order"
                 case seasons
             }
@@ -1015,6 +1031,29 @@ extension Components {
             internal enum CodingKeys: String, CodingKey {
                 case id
                 case listedAt = "listed_at"
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/TitleInList`.
+        internal struct TitleInList: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/TitleInList/list_id`.
+            internal var listId: Swift.Int64
+            /// - Remark: Generated from `#/components/schemas/TitleInList/item_id`.
+            internal var itemId: Swift.Int64
+            /// Creates a new `TitleInList`.
+            ///
+            /// - Parameters:
+            ///   - listId:
+            ///   - itemId:
+            internal init(
+                listId: Swift.Int64,
+                itemId: Swift.Int64
+            ) {
+                self.listId = listId
+                self.itemId = itemId
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case listId = "list_id"
+                case itemId = "item_id"
             }
         }
         /// - Remark: Generated from `#/components/schemas/SeasonDetail`.

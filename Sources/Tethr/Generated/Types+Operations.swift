@@ -1907,7 +1907,7 @@ internal enum Operations {
             }
         }
     }
-    /// When history, playback and the watchlist last changed
+    /// When history, playback, the watchlist, ratings and lists last changed
     ///
     /// Cheap to call. Poll this and only fetch the lists whose time has moved on.
     ///
