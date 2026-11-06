@@ -1192,6 +1192,110 @@ paths:
           $ref: '#/components/responses/Problem'
         '404':
           $ref: '#/components/responses/Problem'
+  /v1/media-servers:
+    get:
+      operationId: listMediaServers
+      summary: Media servers that send your household's plays
+      description: Each server lists the users it has sent plays for. A user's plays are logged to the profile they're matched to. Until then their finished plays are kept for a week, and logged once they're matched.
+      security:
+        - session: []
+      responses:
+        '200':
+          description: Your media servers, oldest first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MediaServer'
+        '401':
+          $ref: '#/components/responses/Problem'
+    post:
+      operationId: addMediaServer
+      summary: Get a webhook address for a media server
+      description: The address comes back once, as a path to add to the API's own address. On Jellyfin, add it as a Generic destination in the Webhook plugin with Send All Properties ticked, for Playback Start, Playback Stop and User Data Saved. On Plex, which needs Plex Pass, add it under Webhooks in the account settings. On Emby, which needs Emby Premiere, add it as a webhook for playback and mark played events. Webhooks are limited to 600 a minute per server.
+      security:
+        - session: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMediaServer'
+      responses:
+        '201':
+          description: Added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddedMediaServer'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+  /v1/media-servers/{id}:
+    delete:
+      operationId: removeMediaServer
+      summary: Stop taking plays from a media server
+      security:
+        - session: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '204':
+          description: Removed
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /v1/media-servers/{id}/address:
+    post:
+      operationId: newMediaServerAddress
+      summary: Replace a media server's webhook address
+      description: The old address stops working straight away.
+      security:
+        - session: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: The new address
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaServerAddress'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /v1/media-servers/{id}/users/{user}:
+    put:
+      operationId: matchServerUser
+      summary: Choose which profile a media server user's plays go to
+      description: Plays kept while the user wasn't matched are logged to the profile. Send a `profile_id` of null to stop logging their plays.
+      security:
+        - session: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - name: user
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServerUserMatch'
+      responses:
+        '204':
+          description: Matched
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
   /v1/apps:
     get:
       operationId: listApps
@@ -1644,12 +1748,15 @@ components:
           description: A name for a new passkey, such as "iCloud Keychain".
     Device:
       type: object
-      required: [code, app_name]
+      required: [code, app_name, official]
       properties:
         code:
           type: string
         app_name:
           type: string
+        official:
+          type: boolean
+          description: Made by Tethr, like the plugins for media servers.
     ProfileChoice:
       type: object
       required: [profile_id]
@@ -1688,13 +1795,16 @@ components:
           type: string
     Connection:
       type: object
-      required: [id, app_name, profile_id, profile_name, created_at]
+      required: [id, app_name, official, profile_id, profile_name, created_at]
       properties:
         id:
           type: integer
           format: int64
         app_name:
           type: string
+        official:
+          type: boolean
+          description: Made by Tethr, like the plugins for media servers.
         profile_id:
           type: integer
           format: int64
@@ -1999,6 +2109,81 @@ components:
         ratings:
           type: string
           format: date-time
+    MediaServer:
+      type: object
+      required: [id, kind, created_at, users]
+      properties:
+        id:
+          type: integer
+          format: int64
+        kind:
+          type: string
+          enum: [jellyfin, plex, emby]
+        name:
+          type: string
+          description: The name the server gives itself, once it has sent something.
+        created_at:
+          type: string
+          format: date-time
+        last_event_at:
+          type: string
+          format: date-time
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/MediaServerUser'
+    MediaServerUser:
+      type: object
+      required: [id, name, ignored, held_plays, last_event_at]
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        profile_id:
+          type: integer
+          format: int64
+          description: Left out until the user is matched to a profile.
+        ignored:
+          type: boolean
+          description: Set not to log their plays.
+        held_plays:
+          type: integer
+          description: Plays finished before the user was matched. They're logged when the user is matched, and dropped after a week or when the user is set not to log.
+        last_event_at:
+          type: string
+          format: date-time
+    NewMediaServer:
+      type: object
+      required: [kind]
+      properties:
+        kind:
+          type: string
+          enum: [jellyfin, plex, emby]
+    AddedMediaServer:
+      type: object
+      required: [server, path]
+      properties:
+        server:
+          $ref: '#/components/schemas/MediaServer'
+        path:
+          type: string
+          description: Add it to the API's address, like `https://api.tethr.tv/hooks/jellyfin/...`.
+    MediaServerAddress:
+      type: object
+      required: [path]
+      properties:
+        path:
+          type: string
+    ServerUserMatch:
+      type: object
+      required: [profile_id]
+      properties:
+        profile_id:
+          type: integer
+          format: int64
+          nullable: true
     DeveloperApp:
       type: object
       required: [id, name, client_id, redirect_uris, connections, created_at]
@@ -2212,7 +2397,7 @@ components:
                 description: Left out, it's now.
     Export:
       type: object
-      required: [format, version, exported_at, account, passkeys, apps, connections, profiles]
+      required: [format, version, exported_at, account, passkeys, apps, connections, media_servers, profiles]
       properties:
         format:
           type: string
@@ -2238,6 +2423,11 @@ components:
           description: Apps connected to profiles in the household.
           items:
             $ref: '#/components/schemas/Connection'
+        media_servers:
+          type: array
+          description: Media servers sending plays, with who on each is matched to which profile. Their addresses aren't included.
+          items:
+            $ref: '#/components/schemas/MediaServer'
         profiles:
           type: array
           items:
