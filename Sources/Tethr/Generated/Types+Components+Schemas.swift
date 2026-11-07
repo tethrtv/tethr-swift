@@ -920,7 +920,7 @@ extension Components {
             internal var rating: Components.Schemas.TitleRating?
             /// - Remark: Generated from `#/components/schemas/TitleDetail/listing`.
             internal var listing: Components.Schemas.TitleListing?
-            /// Your own lists the film or show itself is on.
+            /// Lists in your household that you can see and that the film or show itself is on.
             ///
             /// - Remark: Generated from `#/components/schemas/TitleDetail/lists`.
             internal var lists: [Components.Schemas.TitleInList]?
@@ -941,7 +941,7 @@ extension Components {
             ///   - resume:
             ///   - rating:
             ///   - listing:
-            ///   - lists: Your own lists the film or show itself is on.
+            ///   - lists: Lists in your household that you can see and that the film or show itself is on.
             ///   - episodeOrder: The TMDB episode group the show follows for this profile. Left out, it's aired order.
             ///   - seasons: Numbered in the show's episode order, with specials last. Episodes the order leaves out aren't listed.
             internal init(
