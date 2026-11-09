@@ -138,9 +138,22 @@ public struct ScrobbleResult: Hashable, Sendable {
     public var item: Item
 }
 
+public enum Precision: Hashable, Sendable {
+    case time, day, unknown
+
+    init(_ raw: String) {
+        self = switch raw {
+        case "time": .time
+        case "day": .day
+        default: .unknown
+        }
+    }
+}
+
 public struct Watch: Hashable, Sendable {
     public var id: Int64
     public var watchedAt: Date
+    public var precision: Precision
     public var action: String
     public var item: Item
 }
@@ -148,11 +161,13 @@ public struct Watch: Hashable, Sendable {
 public struct Play: Hashable, Sendable {
     public var id: Int64
     public var watchedAt: Date
+    public var precision: Precision
     public var action: String
 
     init(_ play: Components.Schemas.Play) {
         id = play.id
         watchedAt = play.watchedAt
+        precision = Precision(play.precision.rawValue)
         action = play.action.rawValue
     }
 }
