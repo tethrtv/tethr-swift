@@ -790,6 +790,376 @@ extension Components {
                 case item
             }
         }
+        /// - Remark: Generated from `#/components/schemas/ListSortBy`.
+        internal enum ListSortBy: String, Codable, Hashable, Sendable, CaseIterable {
+            case rank = "rank"
+            case added = "added"
+            case title = "title"
+            case year = "year"
+        }
+        /// - Remark: Generated from `#/components/schemas/ListSortHow`.
+        internal enum ListSortHow: String, Codable, Hashable, Sendable, CaseIterable {
+            case asc = "asc"
+            case desc = "desc"
+        }
+        /// `household` lets every profile in the household read it. `public` lets anyone with the link.
+        ///
+        /// - Remark: Generated from `#/components/schemas/ListPrivacy`.
+        internal enum ListPrivacy: String, Codable, Hashable, Sendable, CaseIterable {
+            case _private = "private"
+            case household = "household"
+            case _public = "public"
+        }
+        /// - Remark: Generated from `#/components/schemas/List`.
+        internal struct List: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/List/id`.
+            internal var id: Swift.Int64
+            /// - Remark: Generated from `#/components/schemas/List/name`.
+            internal var name: Swift.String
+            /// Made from the name, and changes with it.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/slug`.
+            internal var slug: Swift.String
+            /// - Remark: Generated from `#/components/schemas/List/description`.
+            internal var description: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/List/privacy`.
+            internal var privacy: Components.Schemas.ListPrivacy
+            /// - Remark: Generated from `#/components/schemas/List/sort_by`.
+            internal var sortBy: Components.Schemas.ListSortBy
+            /// - Remark: Generated from `#/components/schemas/List/sort_how`.
+            internal var sortHow: Components.Schemas.ListSortHow
+            /// - Remark: Generated from `#/components/schemas/List/owner`.
+            internal var owner: Components.Schemas.ListOwner
+            /// Why you can see it. `mine` is your own list, `household` another profile's in your household, and `public` anyone else's.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/access`.
+            internal enum AccessPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case mine = "mine"
+                case household = "household"
+                case _public = "public"
+            }
+            /// Why you can see it. `mine` is your own list, `household` another profile's in your household, and `public` anyone else's.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/access`.
+            internal var access: Components.Schemas.List.AccessPayload
+            /// Whether the profile reading it can add, remove, reorder and note items. Other profiles in the household can on household lists, and on public ones unless they're kids or guest profiles. Only the owner changes the list's details.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/can_edit_items`.
+            internal var canEditItems: Swift.Bool
+            /// Whether the profile reading it watches the list in order in Up next.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/in_up_next`.
+            internal var inUpNext: Swift.Bool
+            /// Whether the profile reading it follows the list.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/following`.
+            internal var following: Swift.Bool
+            /// - Remark: Generated from `#/components/schemas/List/follower_count`.
+            internal var followerCount: Swift.Int64
+            /// - Remark: Generated from `#/components/schemas/List/item_count`.
+            internal var itemCount: Swift.Int64
+            /// How many items the profile reading the list has finished. Left out when signed out.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/watched_count`.
+            internal var watchedCount: Swift.Int64?
+            /// The item picked as the list's cover. Left out when none is picked.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/cover_item_id`.
+            internal var coverItemId: Swift.Int64?
+            /// The picked cover item, or the first four items in list order when none is picked. Fetch their posters from TMDB.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/cover`.
+            internal var cover: [Components.Schemas.Item]
+            /// The list's page on the website, made from its owner's username and its slug.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/url`.
+            internal var url: Swift.String
+            /// - Remark: Generated from `#/components/schemas/List/created_at`.
+            internal var createdAt: Foundation.Date
+            /// Changes when the list's details change, when items are added, removed, reordered or given notes, and when a title or episode on it is merged with another. An app can keep a copy and only fetch the items of lists that have moved on. Your watched progress, a title's name or year, and an episode's number can change without it.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/updated_at`.
+            internal var updatedAt: Foundation.Date
+            /// Creates a new `List`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - name:
+            ///   - slug: Made from the name, and changes with it.
+            ///   - description:
+            ///   - privacy:
+            ///   - sortBy:
+            ///   - sortHow:
+            ///   - owner:
+            ///   - access: Why you can see it. `mine` is your own list, `household` another profile's in your household, and `public` anyone else's.
+            ///   - canEditItems: Whether the profile reading it can add, remove, reorder and note items. Other profiles in the household can on household lists, and on public ones unless they're kids or guest profiles. Only the owner changes the list's details.
+            ///   - inUpNext: Whether the profile reading it watches the list in order in Up next.
+            ///   - following: Whether the profile reading it follows the list.
+            ///   - followerCount:
+            ///   - itemCount:
+            ///   - watchedCount: How many items the profile reading the list has finished. Left out when signed out.
+            ///   - coverItemId: The item picked as the list's cover. Left out when none is picked.
+            ///   - cover: The picked cover item, or the first four items in list order when none is picked. Fetch their posters from TMDB.
+            ///   - url: The list's page on the website, made from its owner's username and its slug.
+            ///   - createdAt:
+            ///   - updatedAt: Changes when the list's details change, when items are added, removed, reordered or given notes, and when a title or episode on it is merged with another. An app can keep a copy and only fetch the items of lists that have moved on. Your watched progress, a title's name or year, and an episode's number can change without it.
+            internal init(
+                id: Swift.Int64,
+                name: Swift.String,
+                slug: Swift.String,
+                description: Swift.String? = nil,
+                privacy: Components.Schemas.ListPrivacy,
+                sortBy: Components.Schemas.ListSortBy,
+                sortHow: Components.Schemas.ListSortHow,
+                owner: Components.Schemas.ListOwner,
+                access: Components.Schemas.List.AccessPayload,
+                canEditItems: Swift.Bool,
+                inUpNext: Swift.Bool,
+                following: Swift.Bool,
+                followerCount: Swift.Int64,
+                itemCount: Swift.Int64,
+                watchedCount: Swift.Int64? = nil,
+                coverItemId: Swift.Int64? = nil,
+                cover: [Components.Schemas.Item],
+                url: Swift.String,
+                createdAt: Foundation.Date,
+                updatedAt: Foundation.Date
+            ) {
+                self.id = id
+                self.name = name
+                self.slug = slug
+                self.description = description
+                self.privacy = privacy
+                self.sortBy = sortBy
+                self.sortHow = sortHow
+                self.owner = owner
+                self.access = access
+                self.canEditItems = canEditItems
+                self.inUpNext = inUpNext
+                self.following = following
+                self.followerCount = followerCount
+                self.itemCount = itemCount
+                self.watchedCount = watchedCount
+                self.coverItemId = coverItemId
+                self.cover = cover
+                self.url = url
+                self.createdAt = createdAt
+                self.updatedAt = updatedAt
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case id
+                case name
+                case slug
+                case description
+                case privacy
+                case sortBy = "sort_by"
+                case sortHow = "sort_how"
+                case owner
+                case access
+                case canEditItems = "can_edit_items"
+                case inUpNext = "in_up_next"
+                case following
+                case followerCount = "follower_count"
+                case itemCount = "item_count"
+                case watchedCount = "watched_count"
+                case coverItemId = "cover_item_id"
+                case cover
+                case url
+                case createdAt = "created_at"
+                case updatedAt = "updated_at"
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/ListOwner`.
+        internal struct ListOwner: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ListOwner/username`.
+            internal var username: Swift.String
+            /// The list is made by Tethr itself.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ListOwner/official`.
+            internal var official: Swift.Bool
+            /// Left out when the owner's profile is private and you're outside their household.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ListOwner/name`.
+            internal var name: Swift.String?
+            /// Creates a new `ListOwner`.
+            ///
+            /// - Parameters:
+            ///   - username:
+            ///   - official: The list is made by Tethr itself.
+            ///   - name: Left out when the owner's profile is private and you're outside their household.
+            internal init(
+                username: Swift.String,
+                official: Swift.Bool,
+                name: Swift.String? = nil
+            ) {
+                self.username = username
+                self.official = official
+                self.name = name
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case username
+                case official
+                case name
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/ListsPage`.
+        internal struct ListsPage: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ListsPage/lists`.
+            internal var lists: [Components.Schemas.List]
+            /// How many lists match, across every page.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ListsPage/total`.
+            internal var total: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/ListsPage/page`.
+            internal var page: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/ListsPage/limit`.
+            internal var limit: Swift.Int
+            /// Creates a new `ListsPage`.
+            ///
+            /// - Parameters:
+            ///   - lists:
+            ///   - total: How many lists match, across every page.
+            ///   - page:
+            ///   - limit:
+            internal init(
+                lists: [Components.Schemas.List],
+                total: Swift.Int,
+                page: Swift.Int,
+                limit: Swift.Int
+            ) {
+                self.lists = lists
+                self.total = total
+                self.page = page
+                self.limit = limit
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case lists
+                case total
+                case page
+                case limit
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/ListItem`.
+        internal struct ListItem: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ListItem/id`.
+            internal var id: Swift.Int64
+            /// - Remark: Generated from `#/components/schemas/ListItem/rank`.
+            internal var rank: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/ListItem/listed_at`.
+            internal var listedAt: Foundation.Date
+            /// - Remark: Generated from `#/components/schemas/ListItem/notes`.
+            internal var notes: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ListItem/item`.
+            internal var item: Components.Schemas.Item
+            /// - Remark: Generated from `#/components/schemas/ListItem/progress`.
+            internal var progress: Components.Schemas.ItemProgress?
+            /// Creates a new `ListItem`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - rank:
+            ///   - listedAt:
+            ///   - notes:
+            ///   - item:
+            ///   - progress:
+            internal init(
+                id: Swift.Int64,
+                rank: Swift.Int,
+                listedAt: Foundation.Date,
+                notes: Swift.String? = nil,
+                item: Components.Schemas.Item,
+                progress: Components.Schemas.ItemProgress? = nil
+            ) {
+                self.id = id
+                self.rank = rank
+                self.listedAt = listedAt
+                self.notes = notes
+                self.item = item
+                self.progress = progress
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case id
+                case rank
+                case listedAt = "listed_at"
+                case notes
+                case item
+                case progress
+            }
+        }
+        /// How much of the item the profile reading the list has watched. A film or episode has a total of 1, and a show or season counts aired episodes, leaving out specials for a show. Left out when signed out.
+        ///
+        /// - Remark: Generated from `#/components/schemas/ItemProgress`.
+        internal struct ItemProgress: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ItemProgress/watched`.
+            internal var watched: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/ItemProgress/total`.
+            internal var total: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/ItemProgress/last_watched_at`.
+            internal var lastWatchedAt: Foundation.Date?
+            /// Creates a new `ItemProgress`.
+            ///
+            /// - Parameters:
+            ///   - watched:
+            ///   - total:
+            ///   - lastWatchedAt:
+            internal init(
+                watched: Swift.Int,
+                total: Swift.Int,
+                lastWatchedAt: Foundation.Date? = nil
+            ) {
+                self.watched = watched
+                self.total = total
+                self.lastWatchedAt = lastWatchedAt
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case watched
+                case total
+                case lastWatchedAt = "last_watched_at"
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/ListItemsPage`.
+        internal struct ListItemsPage: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ListItemsPage/list`.
+            internal var list: Components.Schemas.List
+            /// - Remark: Generated from `#/components/schemas/ListItemsPage/items`.
+            internal var items: [Components.Schemas.ListItem]
+            /// How many items match, across every page.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ListItemsPage/total`.
+            internal var total: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/ListItemsPage/page`.
+            internal var page: Swift.Int
+            /// - Remark: Generated from `#/components/schemas/ListItemsPage/limit`.
+            internal var limit: Swift.Int
+            /// Creates a new `ListItemsPage`.
+            ///
+            /// - Parameters:
+            ///   - list:
+            ///   - items:
+            ///   - total: How many items match, across every page.
+            ///   - page:
+            ///   - limit:
+            internal init(
+                list: Components.Schemas.List,
+                items: [Components.Schemas.ListItem],
+                total: Swift.Int,
+                page: Swift.Int,
+                limit: Swift.Int
+            ) {
+                self.list = list
+                self.items = items
+                self.total = total
+                self.page = page
+                self.limit = limit
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case list
+                case items
+                case total
+                case page
+                case limit
+            }
+        }
         /// - Remark: Generated from `#/components/schemas/Activity`.
         internal struct Activity: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/Activity/latest`.

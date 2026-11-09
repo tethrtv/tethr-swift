@@ -244,3 +244,33 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
     #expect(found.first?.title.slug == "inception-2010")
     #expect(found.first?.kind == .movie)
 }
+
+let listJSON = #"{"id":31,"name":"Christmas films","slug":"christmas-films","privacy":"public","sort_by":"rank","sort_how":"asc","owner":{"username":"tethr","official":true},"access":"public","can_edit_items":false,"in_up_next":false,"following":false,"follower_count":12,"item_count":45,"cover":[{"type":"movie","title":{"ids":{"tethr":1000000003,"tmdb":1585},"slug":"its-a-wonderful-life-1946","name":"It's a Wonderful Life","year":1946}}],"url":"https://tethr.tv/@tethr/lists/christmas-films","created_at":"2026-11-09T18:00:00Z","updated_at":"2026-11-09T19:00:00Z"}"#
+
+@Test func browsingLists() async throws {
+    let server = FakeServer([
+        "GET /v1/public-lists": [(200, #"{"lists":[\#(listJSON)],"total":21,"page":1,"limit":20}"#)],
+        "GET /v1/lists/31/items": [(200, #"{"list":\#(listJSON),"items":[{"id":5,"rank":1,"listed_at":"2026-11-09T18:00:00Z","item":{"type":"movie","title":{"ids":{"tethr":1000000003,"tmdb":1585},"slug":"its-a-wonderful-life-1946","name":"It's a Wonderful Life","year":1946}},"progress":{"watched":1,"total":1}}],"total":45,"page":2,"limit":1}"#)],
+        "PUT /v1/followed-lists/31": [(200, listJSON)],
+        "DELETE /v1/followed-lists/31": [(204, "")],
+    ])
+    let (tethr, _) = signedIn(server)
+
+    let page = try await tethr.browseLists(official: true)
+    #expect(server.calls[0].query == "order=newest&official=true&page=1&limit=20")
+    #expect(page.hasMore)
+    let list = try #require(page.lists.first)
+    #expect(list.isOfficial && list.owner == "tethr")
+    #expect(list.access == .public)
+    #expect(list.cover.first?.title.ids.tmdb == 1585)
+    #expect(list.updatedAt == ISO8601DateFormatter().date(from: "2026-11-09T19:00:00Z"))
+
+    let items = try await tethr.listItems(id: list.id, page: 2, limit: 1)
+    #expect(server.calls[1].query == "page=2&limit=1")
+    #expect(items.items.first?.progress?.watched == 1)
+    #expect(items.hasMore)
+
+    try await tethr.follow(listID: list.id)
+    try await tethr.unfollow(listID: list.id)
+    #expect(server.calls.map(\.method).suffix(2) == ["PUT", "DELETE"])
+}

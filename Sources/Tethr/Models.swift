@@ -246,11 +246,77 @@ public struct ResumePoint: Hashable, Sendable {
 }
 
 public struct Listing: Hashable, Sendable {
+    public struct Progress: Hashable, Sendable {
+        public var watched: Int
+        public var total: Int
+        public var lastWatchedAt: Date?
+    }
+
     public var id: Int64
     public var rank: Int
     public var listedAt: Date
     public var notes: String?
     public var item: Item
+    public var progress: Progress?
+}
+
+public struct TethrList: Hashable, Sendable, Identifiable {
+    public enum Access: String, Hashable, Sendable {
+        case mine, household, `public`
+    }
+
+    public enum Order: String, Hashable, Sendable {
+        case newest, popular, rising
+    }
+
+    public var id: Int64
+    public var name: String
+    public var description: String?
+    public var owner: String
+    public var isOfficial: Bool
+    public var access: Access
+    public var following: Bool
+    public var followerCount: Int64
+    public var itemCount: Int64
+    public var watchedCount: Int64?
+    public var cover: [Item]
+    public var url: URL?
+    public var updatedAt: Date
+
+    init(_ list: Components.Schemas.List) {
+        id = list.id
+        name = list.name
+        description = list.description
+        owner = list.owner.username
+        isOfficial = list.owner.official
+        access = Access(rawValue: list.access.rawValue)!
+        following = list.following
+        followerCount = list.followerCount
+        itemCount = list.itemCount
+        watchedCount = list.watchedCount
+        cover = list.cover.map(Item.init)
+        url = URL(string: list.url)
+        updatedAt = list.updatedAt
+    }
+}
+
+public struct ListsPage: Hashable, Sendable {
+    public var lists: [TethrList]
+    public var total: Int64
+    public var page: Int
+    public var limit: Int
+
+    public var hasMore: Bool { Int64(page * limit) < total }
+}
+
+public struct ListItemsPage: Hashable, Sendable {
+    public var list: TethrList
+    public var items: [Listing]
+    public var total: Int64
+    public var page: Int
+    public var limit: Int
+
+    public var hasMore: Bool { Int64(page * limit) < total }
 }
 
 public struct Rating: Hashable, Sendable {
