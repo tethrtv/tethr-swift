@@ -60,6 +60,18 @@ let found = try await tethr.search("break")    // films and shows you've watched
 
 Tethr returns IDs, numbers, and names and years from Wikidata. Fetch artwork and anything else from TMDB with your own key.
 
+## Lists
+
+```swift
+let picks = try await tethr.browseLists(official: true) // lists made by Tethr
+let list = picks.lists[0]
+let followed = try await tethr.followedLists()
+let items = try await tethr.listItems(id: list.id, page: 1)
+try await tethr.follow(listID: list.id)
+```
+
+Keep each list's `updatedAt`, and fetch its items again only when that changes. Watched progress, names, years and episode numbers can change without it.
+
 ## Working on it
 
 The client underneath is generated from `openapi.yaml`, a copy of Tethr's spec. After updating it, run `Scripts/generate.sh` and commit the result.

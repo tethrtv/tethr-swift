@@ -61,6 +61,53 @@ internal protocol APIProtocol: Sendable {
     /// - Remark: HTTP `DELETE /v1/watchlist/{id}`.
     /// - Remark: Generated from `#/paths//v1/watchlist/{id}/delete(removeFromWatchlist)`.
     func removeFromWatchlist(_ input: Operations.RemoveFromWatchlist.Input) async throws -> Operations.RemoveFromWatchlist.Output
+    /// Your lists, and the household's
+    ///
+    /// The profile's own lists, then lists other profiles in the household have shared with it or made public. `access` says which.
+    ///
+    /// - Remark: HTTP `GET /v1/lists`.
+    /// - Remark: Generated from `#/paths//v1/lists/get(listLists)`.
+    func listLists(_ input: Operations.ListLists.Input) async throws -> Operations.ListLists.Output
+    /// One list
+    ///
+    /// Public lists can be read by anyone, signed in or not. Household lists need a profile in the same household, and private ones the profile that made them. Lists you can't read are a 404.
+    ///
+    /// - Remark: HTTP `GET /v1/lists/{id}`.
+    /// - Remark: Generated from `#/paths//v1/lists/{id}/get(getList)`.
+    func getList(_ input: Operations.GetList.Input) async throws -> Operations.GetList.Output
+    /// What's on a list
+    ///
+    /// Readable by the same people as the list. Signed in, each item says how much of it the profile has watched, and `hide_watched=true` leaves out what they've finished. Send the ETag back in `If-None-Match` to get a 304 when nothing has changed.
+    ///
+    /// - Remark: HTTP `GET /v1/lists/{id}/items`.
+    /// - Remark: Generated from `#/paths//v1/lists/{id}/items/get(listListItems)`.
+    func listListItems(_ input: Operations.ListListItems.Input) async throws -> Operations.ListListItems.Output
+    /// Lists you follow
+    ///
+    /// Public lists from outside your household, most recently followed first. A followed list that stops being public is left out until it's public again.
+    ///
+    /// - Remark: HTTP `GET /v1/followed-lists`.
+    /// - Remark: Generated from `#/paths//v1/followed-lists/get(listFollowedLists)`.
+    func listFollowedLists(_ input: Operations.ListFollowedLists.Input) async throws -> Operations.ListFollowedLists.Output
+    /// Follow a list
+    ///
+    /// Any public list from outside your household. Kids and guest profiles can't. The owner can see that you follow it, by your username. Following one you already follow does nothing.
+    ///
+    /// - Remark: HTTP `PUT /v1/followed-lists/{id}`.
+    /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/put(followList)`.
+    func followList(_ input: Operations.FollowList.Input) async throws -> Operations.FollowList.Output
+    /// Stop following a list
+    ///
+    /// - Remark: HTTP `DELETE /v1/followed-lists/{id}`.
+    /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/delete(unfollowList)`.
+    func unfollowList(_ input: Operations.UnfollowList.Input) async throws -> Operations.UnfollowList.Output
+    /// Browse public lists
+    ///
+    /// Public lists with at least one item, from anyone. Lists with a report waiting to be looked at are left out. Kids and guest profiles can't browse. Fetch a list's items a page at a time from `/v1/lists/{id}/items`, and compare `updated_at` to skip lists that haven't changed.
+    ///
+    /// - Remark: HTTP `GET /v1/public-lists`.
+    /// - Remark: Generated from `#/paths//v1/public-lists/get(browseLists)`.
+    func browseLists(_ input: Operations.BrowseLists.Input) async throws -> Operations.BrowseLists.Output
     /// When history, playback, the watchlist, ratings and lists last changed
     ///
     /// Cheap to call. Poll this and only fetch the lists whose time has moved on.
@@ -282,6 +329,117 @@ extension APIProtocol {
     ) async throws -> Operations.RemoveFromWatchlist.Output {
         try await removeFromWatchlist(Operations.RemoveFromWatchlist.Input(
             path: path,
+            query: query,
+            headers: headers
+        ))
+    }
+    /// Your lists, and the household's
+    ///
+    /// The profile's own lists, then lists other profiles in the household have shared with it or made public. `access` says which.
+    ///
+    /// - Remark: HTTP `GET /v1/lists`.
+    /// - Remark: Generated from `#/paths//v1/lists/get(listLists)`.
+    internal func listLists(
+        query: Operations.ListLists.Input.Query = .init(),
+        headers: Operations.ListLists.Input.Headers = .init()
+    ) async throws -> Operations.ListLists.Output {
+        try await listLists(Operations.ListLists.Input(
+            query: query,
+            headers: headers
+        ))
+    }
+    /// One list
+    ///
+    /// Public lists can be read by anyone, signed in or not. Household lists need a profile in the same household, and private ones the profile that made them. Lists you can't read are a 404.
+    ///
+    /// - Remark: HTTP `GET /v1/lists/{id}`.
+    /// - Remark: Generated from `#/paths//v1/lists/{id}/get(getList)`.
+    internal func getList(
+        path: Operations.GetList.Input.Path,
+        query: Operations.GetList.Input.Query = .init(),
+        headers: Operations.GetList.Input.Headers = .init()
+    ) async throws -> Operations.GetList.Output {
+        try await getList(Operations.GetList.Input(
+            path: path,
+            query: query,
+            headers: headers
+        ))
+    }
+    /// What's on a list
+    ///
+    /// Readable by the same people as the list. Signed in, each item says how much of it the profile has watched, and `hide_watched=true` leaves out what they've finished. Send the ETag back in `If-None-Match` to get a 304 when nothing has changed.
+    ///
+    /// - Remark: HTTP `GET /v1/lists/{id}/items`.
+    /// - Remark: Generated from `#/paths//v1/lists/{id}/items/get(listListItems)`.
+    internal func listListItems(
+        path: Operations.ListListItems.Input.Path,
+        query: Operations.ListListItems.Input.Query = .init(),
+        headers: Operations.ListListItems.Input.Headers = .init()
+    ) async throws -> Operations.ListListItems.Output {
+        try await listListItems(Operations.ListListItems.Input(
+            path: path,
+            query: query,
+            headers: headers
+        ))
+    }
+    /// Lists you follow
+    ///
+    /// Public lists from outside your household, most recently followed first. A followed list that stops being public is left out until it's public again.
+    ///
+    /// - Remark: HTTP `GET /v1/followed-lists`.
+    /// - Remark: Generated from `#/paths//v1/followed-lists/get(listFollowedLists)`.
+    internal func listFollowedLists(
+        query: Operations.ListFollowedLists.Input.Query = .init(),
+        headers: Operations.ListFollowedLists.Input.Headers = .init()
+    ) async throws -> Operations.ListFollowedLists.Output {
+        try await listFollowedLists(Operations.ListFollowedLists.Input(
+            query: query,
+            headers: headers
+        ))
+    }
+    /// Follow a list
+    ///
+    /// Any public list from outside your household. Kids and guest profiles can't. The owner can see that you follow it, by your username. Following one you already follow does nothing.
+    ///
+    /// - Remark: HTTP `PUT /v1/followed-lists/{id}`.
+    /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/put(followList)`.
+    internal func followList(
+        path: Operations.FollowList.Input.Path,
+        query: Operations.FollowList.Input.Query = .init(),
+        headers: Operations.FollowList.Input.Headers = .init()
+    ) async throws -> Operations.FollowList.Output {
+        try await followList(Operations.FollowList.Input(
+            path: path,
+            query: query,
+            headers: headers
+        ))
+    }
+    /// Stop following a list
+    ///
+    /// - Remark: HTTP `DELETE /v1/followed-lists/{id}`.
+    /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/delete(unfollowList)`.
+    internal func unfollowList(
+        path: Operations.UnfollowList.Input.Path,
+        query: Operations.UnfollowList.Input.Query = .init(),
+        headers: Operations.UnfollowList.Input.Headers = .init()
+    ) async throws -> Operations.UnfollowList.Output {
+        try await unfollowList(Operations.UnfollowList.Input(
+            path: path,
+            query: query,
+            headers: headers
+        ))
+    }
+    /// Browse public lists
+    ///
+    /// Public lists with at least one item, from anyone. Lists with a report waiting to be looked at are left out. Kids and guest profiles can't browse. Fetch a list's items a page at a time from `/v1/lists/{id}/items`, and compare `updated_at` to skip lists that haven't changed.
+    ///
+    /// - Remark: HTTP `GET /v1/public-lists`.
+    /// - Remark: Generated from `#/paths//v1/public-lists/get(browseLists)`.
+    internal func browseLists(
+        query: Operations.BrowseLists.Input.Query = .init(),
+        headers: Operations.BrowseLists.Input.Headers = .init()
+    ) async throws -> Operations.BrowseLists.Output {
+        try await browseLists(Operations.BrowseLists.Input(
             query: query,
             headers: headers
         ))

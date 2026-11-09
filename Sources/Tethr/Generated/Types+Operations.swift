@@ -1907,6 +1907,1573 @@ internal enum Operations {
             }
         }
     }
+    /// Your lists, and the household's
+    ///
+    /// The profile's own lists, then lists other profiles in the household have shared with it or made public. `access` says which.
+    ///
+    /// - Remark: HTTP `GET /v1/lists`.
+    /// - Remark: Generated from `#/paths//v1/lists/get(listLists)`.
+    internal enum ListLists {
+        internal static let id: Swift.String = "listLists"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/lists/GET/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/lists/GET/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.ListLists.Input.Query
+            /// - Remark: Generated from `#/paths/v1/lists/GET/header`.
+            internal struct Headers: Sendable, Hashable {
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ListLists.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                internal init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ListLists.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.ListLists.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - query:
+            ///   - headers:
+            internal init(
+                query: Operations.ListLists.Input.Query = .init(),
+                headers: Operations.ListLists.Input.Headers = .init()
+            ) {
+                self.query = query
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/lists/GET/responses/200/content`.
+                internal enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/v1/lists/GET/responses/200/content/application\/json`.
+                    case json([Components.Schemas.List])
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    internal var json: [Components.Schemas.List] {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                internal var body: Operations.ListLists.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                internal init(body: Operations.ListLists.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// Lists
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/get(listLists)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.ListLists.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            internal var ok: Operations.ListLists.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/get(listLists)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/get(listLists)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// One list
+    ///
+    /// Public lists can be read by anyone, signed in or not. Household lists need a profile in the same household, and private ones the profile that made them. Lists you can't read are a 404.
+    ///
+    /// - Remark: HTTP `GET /v1/lists/{id}`.
+    /// - Remark: Generated from `#/paths//v1/lists/{id}/get(getList)`.
+    internal enum GetList {
+        internal static let id: Swift.String = "getList"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/lists/{id}/GET/path`.
+            internal struct Path: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/GET/path/id`.
+                internal var id: Components.Parameters.Id
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                internal init(id: Components.Parameters.Id) {
+                    self.id = id
+                }
+            }
+            internal var path: Operations.GetList.Input.Path
+            /// - Remark: Generated from `#/paths/v1/lists/{id}/GET/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/GET/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.GetList.Input.Query
+            /// - Remark: Generated from `#/paths/v1/lists/{id}/GET/header`.
+            internal struct Headers: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/GET/header/If-None-Match`.
+                internal var ifNoneMatch: Components.Parameters.IfNoneMatch?
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.GetList.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - ifNoneMatch:
+                ///   - accept:
+                internal init(
+                    ifNoneMatch: Components.Parameters.IfNoneMatch? = nil,
+                    accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.GetList.AcceptableContentType>] = .defaultValues()
+                ) {
+                    self.ifNoneMatch = ifNoneMatch
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.GetList.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - query:
+            ///   - headers:
+            internal init(
+                path: Operations.GetList.Input.Path,
+                query: Operations.GetList.Input.Query = .init(),
+                headers: Operations.GetList.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.query = query
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/GET/responses/200/headers`.
+                internal struct Headers: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/v1/lists/{id}/GET/responses/200/headers/ETag`.
+                    internal var eTag: Swift.String?
+                    /// Creates a new `Headers`.
+                    ///
+                    /// - Parameters:
+                    ///   - eTag:
+                    internal init(eTag: Swift.String? = nil) {
+                        self.eTag = eTag
+                    }
+                }
+                /// Received HTTP response headers
+                internal var headers: Operations.GetList.Output.Ok.Headers
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/GET/responses/200/content`.
+                internal enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/v1/lists/{id}/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.List)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    internal var json: Components.Schemas.List {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                internal var body: Operations.GetList.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - headers: Received HTTP response headers
+                ///   - body: Received HTTP response body
+                internal init(
+                    headers: Operations.GetList.Output.Ok.Headers = .init(),
+                    body: Operations.GetList.Output.Ok.Body
+                ) {
+                    self.headers = headers
+                    self.body = body
+                }
+            }
+            /// The list
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/{id}/get(getList)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.GetList.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            internal var ok: Operations.GetList.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            internal struct NotModified: Sendable, Hashable {
+                /// Creates a new `NotModified`.
+                internal init() {}
+            }
+            /// Not changed since the ETag you sent
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/{id}/get(getList)/responses/304`.
+            ///
+            /// HTTP response code: `304 notModified`.
+            case notModified(Operations.GetList.Output.NotModified)
+            /// Not changed since the ETag you sent
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/{id}/get(getList)/responses/304`.
+            ///
+            /// HTTP response code: `304 notModified`.
+            internal static var notModified: Self {
+                .notModified(.init())
+            }
+            /// The associated value of the enum case if `self` is `.notModified`.
+            ///
+            /// - Throws: An error if `self` is not `.notModified`.
+            /// - SeeAlso: `.notModified`.
+            internal var notModified: Operations.GetList.Output.NotModified {
+                get throws {
+                    switch self {
+                    case let .notModified(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notModified",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/{id}/get(getList)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/{id}/get(getList)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// What's on a list
+    ///
+    /// Readable by the same people as the list. Signed in, each item says how much of it the profile has watched, and `hide_watched=true` leaves out what they've finished. Send the ETag back in `If-None-Match` to get a 304 when nothing has changed.
+    ///
+    /// - Remark: HTTP `GET /v1/lists/{id}/items`.
+    /// - Remark: Generated from `#/paths//v1/lists/{id}/items/get(listListItems)`.
+    internal enum ListListItems {
+        internal static let id: Swift.String = "listListItems"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/path`.
+            internal struct Path: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/path/id`.
+                internal var id: Components.Parameters.Id
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                internal init(id: Components.Parameters.Id) {
+                    self.id = id
+                }
+            }
+            internal var path: Operations.ListListItems.Input.Path
+            /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/query/type`.
+                internal enum _TypePayload: String, Codable, Hashable, Sendable, CaseIterable {
+                    case movie = "movie"
+                    case show = "show"
+                    case season = "season"
+                    case episode = "episode"
+                }
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/query/type`.
+                internal var _type: Operations.ListListItems.Input.Query._TypePayload?
+                /// Left out, the list's own order.
+                ///
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/query/sort_by`.
+                internal var sortBy: Components.Schemas.ListSortBy?
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/query/sort_how`.
+                internal var sortHow: Components.Schemas.ListSortHow?
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/query/hide_watched`.
+                internal var hideWatched: Swift.Bool?
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/query/page`.
+                internal var page: Swift.Int?
+                /// 100 by default, and up to 1,000.
+                ///
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/query/limit`.
+                internal var limit: Swift.Int?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///   - _type:
+                ///   - sortBy: Left out, the list's own order.
+                ///   - sortHow:
+                ///   - hideWatched:
+                ///   - page:
+                ///   - limit: 100 by default, and up to 1,000.
+                internal init(
+                    profileId: Components.Parameters.ProfileId? = nil,
+                    _type: Operations.ListListItems.Input.Query._TypePayload? = nil,
+                    sortBy: Components.Schemas.ListSortBy? = nil,
+                    sortHow: Components.Schemas.ListSortHow? = nil,
+                    hideWatched: Swift.Bool? = nil,
+                    page: Swift.Int? = nil,
+                    limit: Swift.Int? = nil
+                ) {
+                    self.profileId = profileId
+                    self._type = _type
+                    self.sortBy = sortBy
+                    self.sortHow = sortHow
+                    self.hideWatched = hideWatched
+                    self.page = page
+                    self.limit = limit
+                }
+            }
+            internal var query: Operations.ListListItems.Input.Query
+            /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/header`.
+            internal struct Headers: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/header/If-None-Match`.
+                internal var ifNoneMatch: Components.Parameters.IfNoneMatch?
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ListListItems.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - ifNoneMatch:
+                ///   - accept:
+                internal init(
+                    ifNoneMatch: Components.Parameters.IfNoneMatch? = nil,
+                    accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ListListItems.AcceptableContentType>] = .defaultValues()
+                ) {
+                    self.ifNoneMatch = ifNoneMatch
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.ListListItems.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - query:
+            ///   - headers:
+            internal init(
+                path: Operations.ListListItems.Input.Path,
+                query: Operations.ListListItems.Input.Query = .init(),
+                headers: Operations.ListListItems.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.query = query
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/responses/200/headers`.
+                internal struct Headers: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/responses/200/headers/ETag`.
+                    internal var eTag: Swift.String?
+                    /// Creates a new `Headers`.
+                    ///
+                    /// - Parameters:
+                    ///   - eTag:
+                    internal init(eTag: Swift.String? = nil) {
+                        self.eTag = eTag
+                    }
+                }
+                /// Received HTTP response headers
+                internal var headers: Operations.ListListItems.Output.Ok.Headers
+                /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/responses/200/content`.
+                internal enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/v1/lists/{id}/items/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.ListItemsPage)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    internal var json: Components.Schemas.ListItemsPage {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                internal var body: Operations.ListListItems.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - headers: Received HTTP response headers
+                ///   - body: Received HTTP response body
+                internal init(
+                    headers: Operations.ListListItems.Output.Ok.Headers = .init(),
+                    body: Operations.ListListItems.Output.Ok.Body
+                ) {
+                    self.headers = headers
+                    self.body = body
+                }
+            }
+            /// The list and a page of its items
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/{id}/items/get(listListItems)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.ListListItems.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            internal var ok: Operations.ListListItems.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            internal struct NotModified: Sendable, Hashable {
+                /// Creates a new `NotModified`.
+                internal init() {}
+            }
+            /// Not changed since the ETag you sent
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/{id}/items/get(listListItems)/responses/304`.
+            ///
+            /// HTTP response code: `304 notModified`.
+            case notModified(Operations.ListListItems.Output.NotModified)
+            /// Not changed since the ETag you sent
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/{id}/items/get(listListItems)/responses/304`.
+            ///
+            /// HTTP response code: `304 notModified`.
+            internal static var notModified: Self {
+                .notModified(.init())
+            }
+            /// The associated value of the enum case if `self` is `.notModified`.
+            ///
+            /// - Throws: An error if `self` is not `.notModified`.
+            /// - SeeAlso: `.notModified`.
+            internal var notModified: Operations.ListListItems.Output.NotModified {
+                get throws {
+                    switch self {
+                    case let .notModified(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notModified",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/{id}/items/get(listListItems)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/lists/{id}/items/get(listListItems)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Lists you follow
+    ///
+    /// Public lists from outside your household, most recently followed first. A followed list that stops being public is left out until it's public again.
+    ///
+    /// - Remark: HTTP `GET /v1/followed-lists`.
+    /// - Remark: Generated from `#/paths//v1/followed-lists/get(listFollowedLists)`.
+    internal enum ListFollowedLists {
+        internal static let id: Swift.String = "listFollowedLists"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/followed-lists/GET/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/followed-lists/GET/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.ListFollowedLists.Input.Query
+            /// - Remark: Generated from `#/paths/v1/followed-lists/GET/header`.
+            internal struct Headers: Sendable, Hashable {
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ListFollowedLists.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                internal init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ListFollowedLists.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.ListFollowedLists.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - query:
+            ///   - headers:
+            internal init(
+                query: Operations.ListFollowedLists.Input.Query = .init(),
+                headers: Operations.ListFollowedLists.Input.Headers = .init()
+            ) {
+                self.query = query
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/followed-lists/GET/responses/200/content`.
+                internal enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/v1/followed-lists/GET/responses/200/content/application\/json`.
+                    case json([Components.Schemas.List])
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    internal var json: [Components.Schemas.List] {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                internal var body: Operations.ListFollowedLists.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                internal init(body: Operations.ListFollowedLists.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// Lists
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/get(listFollowedLists)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.ListFollowedLists.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            internal var ok: Operations.ListFollowedLists.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/get(listFollowedLists)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/get(listFollowedLists)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Follow a list
+    ///
+    /// Any public list from outside your household. Kids and guest profiles can't. The owner can see that you follow it, by your username. Following one you already follow does nothing.
+    ///
+    /// - Remark: HTTP `PUT /v1/followed-lists/{id}`.
+    /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/put(followList)`.
+    internal enum FollowList {
+        internal static let id: Swift.String = "followList"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/PUT/path`.
+            internal struct Path: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/PUT/path/id`.
+                internal var id: Components.Parameters.Id
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                internal init(id: Components.Parameters.Id) {
+                    self.id = id
+                }
+            }
+            internal var path: Operations.FollowList.Input.Path
+            /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/PUT/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/PUT/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.FollowList.Input.Query
+            /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/PUT/header`.
+            internal struct Headers: Sendable, Hashable {
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.FollowList.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                internal init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.FollowList.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.FollowList.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - query:
+            ///   - headers:
+            internal init(
+                path: Operations.FollowList.Input.Path,
+                query: Operations.FollowList.Input.Query = .init(),
+                headers: Operations.FollowList.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.query = query
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/PUT/responses/200/content`.
+                internal enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/PUT/responses/200/content/application\/json`.
+                    case json(Components.Schemas.List)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    internal var json: Components.Schemas.List {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                internal var body: Operations.FollowList.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                internal init(body: Operations.FollowList.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// Following
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/put(followList)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.FollowList.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            internal var ok: Operations.FollowList.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/put(followList)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/put(followList)/responses/403`.
+            ///
+            /// HTTP response code: `403 forbidden`.
+            case forbidden(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.forbidden`.
+            ///
+            /// - Throws: An error if `self` is not `.forbidden`.
+            /// - SeeAlso: `.forbidden`.
+            internal var forbidden: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .forbidden(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "forbidden",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/put(followList)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/put(followList)/responses/409`.
+            ///
+            /// HTTP response code: `409 conflict`.
+            case conflict(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.conflict`.
+            ///
+            /// - Throws: An error if `self` is not `.conflict`.
+            /// - SeeAlso: `.conflict`.
+            internal var conflict: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .conflict(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "conflict",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Stop following a list
+    ///
+    /// - Remark: HTTP `DELETE /v1/followed-lists/{id}`.
+    /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/delete(unfollowList)`.
+    internal enum UnfollowList {
+        internal static let id: Swift.String = "unfollowList"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/DELETE/path`.
+            internal struct Path: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/DELETE/path/id`.
+                internal var id: Components.Parameters.Id
+                /// Creates a new `Path`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                internal init(id: Components.Parameters.Id) {
+                    self.id = id
+                }
+            }
+            internal var path: Operations.UnfollowList.Input.Path
+            /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/DELETE/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/DELETE/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                internal init(profileId: Components.Parameters.ProfileId? = nil) {
+                    self.profileId = profileId
+                }
+            }
+            internal var query: Operations.UnfollowList.Input.Query
+            /// - Remark: Generated from `#/paths/v1/followed-lists/{id}/DELETE/header`.
+            internal struct Headers: Sendable, Hashable {
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.UnfollowList.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                internal init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.UnfollowList.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.UnfollowList.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - path:
+            ///   - query:
+            ///   - headers:
+            internal init(
+                path: Operations.UnfollowList.Input.Path,
+                query: Operations.UnfollowList.Input.Query = .init(),
+                headers: Operations.UnfollowList.Input.Headers = .init()
+            ) {
+                self.path = path
+                self.query = query
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct NoContent: Sendable, Hashable {
+                /// Creates a new `NoContent`.
+                internal init() {}
+            }
+            /// Not following
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/delete(unfollowList)/responses/204`.
+            ///
+            /// HTTP response code: `204 noContent`.
+            case noContent(Operations.UnfollowList.Output.NoContent)
+            /// Not following
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/delete(unfollowList)/responses/204`.
+            ///
+            /// HTTP response code: `204 noContent`.
+            internal static var noContent: Self {
+                .noContent(.init())
+            }
+            /// The associated value of the enum case if `self` is `.noContent`.
+            ///
+            /// - Throws: An error if `self` is not `.noContent`.
+            /// - SeeAlso: `.noContent`.
+            internal var noContent: Operations.UnfollowList.Output.NoContent {
+                get throws {
+                    switch self {
+                    case let .noContent(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "noContent",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/delete(unfollowList)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/followed-lists/{id}/delete(unfollowList)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Browse public lists
+    ///
+    /// Public lists with at least one item, from anyone. Lists with a report waiting to be looked at are left out. Kids and guest profiles can't browse. Fetch a list's items a page at a time from `/v1/lists/{id}/items`, and compare `updated_at` to skip lists that haven't changed.
+    ///
+    /// - Remark: HTTP `GET /v1/public-lists`.
+    /// - Remark: Generated from `#/paths//v1/public-lists/get(browseLists)`.
+    internal enum BrowseLists {
+        internal static let id: Swift.String = "browseLists"
+        internal struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/v1/public-lists/GET/query`.
+            internal struct Query: Sendable, Hashable {
+                /// With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///
+                /// - Remark: Generated from `#/paths/v1/public-lists/GET/query/profile_id`.
+                internal var profileId: Components.Parameters.ProfileId?
+                /// - Remark: Generated from `#/paths/v1/public-lists/GET/query/order`.
+                internal enum OrderPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                    case popular = "popular"
+                    case rising = "rising"
+                    case newest = "newest"
+                }
+                /// Most followed first, most new followers in the last 7 days first (only lists with some), or newest first. Newest by default. Lists made by Tethr come first.
+                ///
+                /// - Remark: Generated from `#/paths/v1/public-lists/GET/query/order`.
+                internal var order: Operations.BrowseLists.Input.Query.OrderPayload?
+                /// True for only lists made by Tethr, false to leave them out. Left out, both are listed.
+                ///
+                /// - Remark: Generated from `#/paths/v1/public-lists/GET/query/official`.
+                internal var official: Swift.Bool?
+                /// Only lists whose name contains this, ignoring case.
+                ///
+                /// - Remark: Generated from `#/paths/v1/public-lists/GET/query/q`.
+                internal var q: Swift.String?
+                /// - Remark: Generated from `#/paths/v1/public-lists/GET/query/page`.
+                internal var page: Swift.Int?
+                /// 20 by default, and up to 100.
+                ///
+                /// - Remark: Generated from `#/paths/v1/public-lists/GET/query/limit`.
+                internal var limit: Swift.Int?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
+                ///   - order: Most followed first, most new followers in the last 7 days first (only lists with some), or newest first. Newest by default. Lists made by Tethr come first.
+                ///   - official: True for only lists made by Tethr, false to leave them out. Left out, both are listed.
+                ///   - q: Only lists whose name contains this, ignoring case.
+                ///   - page:
+                ///   - limit: 20 by default, and up to 100.
+                internal init(
+                    profileId: Components.Parameters.ProfileId? = nil,
+                    order: Operations.BrowseLists.Input.Query.OrderPayload? = nil,
+                    official: Swift.Bool? = nil,
+                    q: Swift.String? = nil,
+                    page: Swift.Int? = nil,
+                    limit: Swift.Int? = nil
+                ) {
+                    self.profileId = profileId
+                    self.order = order
+                    self.official = official
+                    self.q = q
+                    self.page = page
+                    self.limit = limit
+                }
+            }
+            internal var query: Operations.BrowseLists.Input.Query
+            /// - Remark: Generated from `#/paths/v1/public-lists/GET/header`.
+            internal struct Headers: Sendable, Hashable {
+                internal var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.BrowseLists.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                internal init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.BrowseLists.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            internal var headers: Operations.BrowseLists.Input.Headers
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - query:
+            ///   - headers:
+            internal init(
+                query: Operations.BrowseLists.Input.Query = .init(),
+                headers: Operations.BrowseLists.Input.Headers = .init()
+            ) {
+                self.query = query
+                self.headers = headers
+            }
+        }
+        internal enum Output: Sendable, Hashable {
+            internal struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/v1/public-lists/GET/responses/200/content`.
+                internal enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/v1/public-lists/GET/responses/200/content/application\/json`.
+                    case json(Components.Schemas.ListsPage)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    internal var json: Components.Schemas.ListsPage {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                internal var body: Operations.BrowseLists.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                internal init(body: Operations.BrowseLists.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+            /// A page of lists
+            ///
+            /// - Remark: Generated from `#/paths//v1/public-lists/get(browseLists)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.BrowseLists.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            internal var ok: Operations.BrowseLists.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/public-lists/get(browseLists)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            internal var unauthorized: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/public-lists/get(browseLists)/responses/403`.
+            ///
+            /// HTTP response code: `403 forbidden`.
+            case forbidden(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.forbidden`.
+            ///
+            /// - Throws: An error if `self` is not `.forbidden`.
+            /// - SeeAlso: `.forbidden`.
+            internal var forbidden: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .forbidden(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "forbidden",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/public-lists/get(browseLists)/responses/404`.
+            ///
+            /// HTTP response code: `404 notFound`.
+            case notFound(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.notFound`.
+            ///
+            /// - Throws: An error if `self` is not `.notFound`.
+            /// - SeeAlso: `.notFound`.
+            internal var notFound: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .notFound(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "notFound",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        internal enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            internal init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            internal var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            internal static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
     /// When history, playback, the watchlist, ratings and lists last changed
     ///
     /// Cheap to call. Poll this and only fetch the lists whose time has moved on.

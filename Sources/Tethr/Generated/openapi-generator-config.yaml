@@ -28,3 +28,10 @@ filter:
     - removeRating
     - getTitle
     - search
+    - listLists
+    - listFollowedLists
+    - browseLists
+    - getList
+    - listListItems
+    - followList
+    - unfollowList
