@@ -26,7 +26,7 @@ extension Tethr {
             limit: limit
         )
         let h = try await unwrapping { try await api.listHistory(query: query).ok.body.json }
-        let watches = h.items.map { Watch(id: $0.id, watchedAt: $0.watchedAt, action: $0.action.rawValue, item: Item($0.item)) }
+        let watches = h.items.map { Watch(id: $0.id, watchedAt: $0.watchedAt, precision: Precision($0.precision.rawValue), action: $0.action.rawValue, item: Item($0.item)) }
         return HistoryPage(watches: watches, total: h.total, page: h.page, limit: h.limit)
     }
 
