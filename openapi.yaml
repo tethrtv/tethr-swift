@@ -269,6 +269,57 @@ paths:
           $ref: '#/components/responses/Problem'
         '404':
           $ref: '#/components/responses/Problem'
+  /v1/invites:
+    get:
+      operationId: listInvites
+      summary: Your invites
+      description: While sign-ups are invite-only, each account can make three invites to share. `open` is true when anyone can sign up, so there's nothing to share.
+      security:
+        - session: []
+      responses:
+        '200':
+          description: Invites
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invites'
+        '401':
+          $ref: '#/components/responses/Problem'
+    post:
+      operationId: makeInvite
+      summary: Make an invite to share
+      description: Each code works once. The person who uses it sees your username when they sign up.
+      security:
+        - session: []
+      responses:
+        '201':
+          description: Made
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invite'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+  /v1/invites/{code}:
+    get:
+      operationId: checkInvite
+      summary: Check an invite code
+      description: Whether a code can still be used, and the username of the person who made it. Anyone can ask.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InviteCheck'
   /v1/sessions:
     get:
       operationId: listSessions
@@ -1246,6 +1297,229 @@ paths:
           $ref: '#/components/responses/Problem'
         '404':
           $ref: '#/components/responses/Problem'
+  /v1/lists/{id}/followers:
+    get:
+      operationId: listFollowers
+      summary: Who follows your list
+      description: Only the list's owner can ask. Each follower shows their username, and their name too if their profile is public. Newest first.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Followers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Follower'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /v1/lists/{id}/reports:
+    post:
+      operationId: reportList
+      summary: Report a list that breaks the rules
+      description: For public lists from outside your household. The list leaves browsing until it's been looked at, but still opens for its owner, its followers and anyone with the link. Reporting the same list again before then does nothing. A profile can send up to 20 reports a day.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewReport'
+      responses:
+        '204':
+          description: Reported
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '429':
+          $ref: '#/components/responses/Problem'
+  /v1/followed-lists:
+    get:
+      operationId: listFollowedLists
+      summary: Lists you follow
+      description: Public lists from outside your household, most recently followed first. A followed list that stops being public is left out until it's public again.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+      responses:
+        '200':
+          description: Lists
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/List'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /v1/followed-lists/{id}:
+    put:
+      operationId: followList
+      summary: Follow a list
+      description: Any public list from outside your household. Kids and guest profiles can't. The owner can see that you follow it, by your username. Following one you already follow does nothing.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/ProfileId'
+      responses:
+        '200':
+          description: Following
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/List'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+    delete:
+      operationId: unfollowList
+      summary: Stop following a list
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/ProfileId'
+      responses:
+        '204':
+          description: Not following
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /v1/public-lists:
+    get:
+      operationId: browseLists
+      summary: Browse public lists
+      description: Public lists with at least one item, from anyone. Lists with a report waiting to be looked at are left out. Kids and guest profiles can't browse.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - name: order
+          in: query
+          description: Most followed first, or newest first. Newest by default.
+          schema:
+            type: string
+            enum: [popular, newest]
+        - name: q
+          in: query
+          description: Only lists whose name contains this, ignoring case.
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: 20 by default, and up to 100.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A page of lists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListsPage'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /v1/users/{username}:
+    get:
+      operationId: getUser
+      summary: Someone's public page
+      description: A profile's username, its name if the profile is public or in your household, and the lists you can see. Anyone can read it, signed in or not, but kids and guest profiles only see their own household's pages. An old username still finds the profile until someone else takes it, and the page you get back has the current one.
+      security:
+        - session: []
+        - bearer: []
+        - {}
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /v1/users/{username}/lists/{slug}:
+    get:
+      operationId: getUserList
+      summary: One list by its address
+      description: Finds a list by its owner's username and its slug, as in the list's url. Old usernames and old slugs still find the list after a rename, and the list you get back has the current ones. Who can read it works as for getting a list by its ID.
+      security:
+        - session: []
+        - bearer: []
+        - {}
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/List'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
   /v1/activity:
     get:
       operationId: getActivity
@@ -1321,6 +1595,41 @@ paths:
           $ref: '#/components/responses/Problem'
         '404':
           $ref: '#/components/responses/Problem'
+  /v1/up-next/rewatch/{id}:
+    put:
+      operationId: startRewatch
+      summary: Watch a show again from the start
+      description: From now on only new plays count towards the show's progress, so Up next offers the first episode again. Nothing is deleted from history. Starting again while a rewatch is going restarts it. This is the same as Trakt's progress reset.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/ProfileId'
+      responses:
+        '204':
+          description: Rewatching
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+    delete:
+      operationId: stopRewatch
+      summary: Stop rewatching a show
+      description: Progress counts every play again.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/ProfileId'
+      responses:
+        '204':
+          description: Stopped
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
   /v1/up-next/lists:
     get:
       operationId: getUpNextLists
@@ -1376,6 +1685,29 @@ paths:
       responses:
         '204':
           description: Out of Up next
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /v1/upcoming:
+    get:
+      operationId: getUpcoming
+      summary: Episodes coming up for the shows you watch
+      description: Every episode airing in the next 7 days for shows you've watched any of, whether you're caught up or not, and the next one after that for shows with nothing this week. Shows on your watchlist that you haven't started only appear for the first episode of a season. Specials, episodes you've already watched and hidden shows are left out. Air dates are the date TMDB gives, without a time. Soonest first.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+      responses:
+        '200':
+          description: One entry per episode
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UpcomingEntry'
         '401':
           $ref: '#/components/responses/Problem'
         '404':
@@ -1602,11 +1934,13 @@ paths:
           $ref: '#/components/responses/Problem'
     post:
       operationId: createImport
-      summary: Read a Trakt export before importing it
+      summary: Read a Trakt export or Simkl backup before importing it
       description: |
-        Send the zip from Trakt's data export as the body. Tethr reads history, the watchlist, resume points, ratings and hidden items, and keeps them for 24 hours. Nothing is written until the import is applied, so check the counts and the unmatched list first. Everything else in the zip is ignored.
+        Send the zip from Trakt's data export, or the zip from Simkl's "Download backup", as the body. Tethr reads history, the watchlist, resume points, ratings and hidden items, and keeps them for 24 hours. Nothing is written until the import is applied, so check the counts and the unmatched list first. Everything else in the zip is ignored.
 
-        Items are matched by their TMDB, IMDb and TVDB IDs. Anything without one of those is listed as unmatched rather than guessed. Plays already in history at the same time are skipped, so importing the same file twice is safe.
+        Items are matched by their TMDB, IMDb and TVDB IDs. Anything without one of those is listed as unmatched rather than guessed. Simkl lists anime by its own seasons with anime-site IDs only, so anime episodes are listed as unmatched. Plays already in history at the same time are skipped, so importing the same file twice is safe.
+
+        Exports without IDs, like Letterboxd's, are matched first and sent as JSON instead, which is how the website does it. Items without a `tmdb` ID are listed as unmatched.
       security:
         - session: []
         - bearer: []
@@ -1624,6 +1958,9 @@ paths:
             schema:
               type: string
               format: binary
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewImport'
       responses:
         '201':
           description: The import, ready to apply
@@ -2216,6 +2553,51 @@ components:
           type: string
         private:
           type: boolean
+    Invites:
+      type: object
+      required: [open, paused, left, invites]
+      properties:
+        open:
+          type: boolean
+          description: Anyone can sign up, so invites aren't needed.
+        paused:
+          type: boolean
+          description: New invites can't be made for now. Ones already made still work.
+        left:
+          type: integer
+          description: How many more invites the account can make.
+        invites:
+          type: array
+          description: Invites the account has made, oldest first.
+          items:
+            $ref: '#/components/schemas/Invite'
+    Invite:
+      type: object
+      required: [code, url, created_at]
+      properties:
+        code:
+          type: string
+        url:
+          type: string
+          description: The sign-up page with the code filled in.
+        created_at:
+          type: string
+          format: date-time
+        used_at:
+          type: string
+          format: date-time
+        used_by:
+          type: string
+          description: The username of the account that used it.
+    InviteCheck:
+      type: object
+      required: [valid]
+      properties:
+        valid:
+          type: boolean
+        invited_by:
+          type: string
+          description: The username of the person who made the invite. Left out for invites from Tethr itself.
     Session:
       type: object
       required: [id, created_at, last_seen_at, current]
@@ -2515,7 +2897,7 @@ components:
           $ref: '#/components/schemas/Item'
     Watch:
       type: object
-      required: [id, watched_at, action, item]
+      required: [id, watched_at, precision, action, item]
       properties:
         id:
           type: integer
@@ -2523,6 +2905,10 @@ components:
         watched_at:
           type: string
           format: date-time
+        precision:
+          type: string
+          enum: [time, day, none]
+          description: How much of `watched_at` is known. With `day` only the date is, and its time is noon UTC. With `none` it was seen at some point nobody recorded, and `watched_at` is 1970-01-01.
         action:
           type: string
           enum: [scrobble, checkin, watch]
@@ -2628,7 +3014,7 @@ components:
       enum: [private, household, public]
     List:
       type: object
-      required: [id, name, slug, privacy, sort_by, sort_how, owner, access, can_edit_items, in_up_next, item_count, cover, url, created_at, updated_at]
+      required: [id, name, slug, privacy, sort_by, sort_how, owner, access, can_edit_items, in_up_next, following, follower_count, item_count, cover, url, created_at, updated_at]
       properties:
         id:
           type: integer
@@ -2658,6 +3044,12 @@ components:
         in_up_next:
           type: boolean
           description: Whether the profile reading it watches the list in order in Up next.
+        following:
+          type: boolean
+          description: Whether the profile reading it follows the list.
+        follower_count:
+          type: integer
+          format: int64
         item_count:
           type: integer
           format: int64
@@ -2676,7 +3068,7 @@ components:
             $ref: '#/components/schemas/Item'
         url:
           type: string
-          description: The list's page on the website.
+          description: The list's page on the website, made from its owner's username and its slug.
         created_at:
           type: string
           format: date-time
@@ -2685,12 +3077,67 @@ components:
           format: date-time
     ListOwner:
       type: object
-      required: [username, name]
+      required: [username]
       properties:
         username:
           type: string
         name:
           type: string
+          description: Left out when the owner's profile is private and you're outside their household.
+    Follower:
+      type: object
+      required: [username, followed_at]
+      properties:
+        username:
+          type: string
+        name:
+          type: string
+          description: Left out when the follower's profile is private.
+        followed_at:
+          type: string
+          format: date-time
+    NewReport:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          description: "`illegal` for anything against the law, `harassment` for threats or abuse, `personal` for someone's private details, `spam` for adverts or scams."
+          enum: [illegal, harassment, personal, spam, other]
+        note:
+          type: string
+          description: Anything that helps, up to 500 characters.
+    ListsPage:
+      type: object
+      required: [lists, total, page, limit]
+      properties:
+        lists:
+          type: array
+          items:
+            $ref: '#/components/schemas/List'
+        total:
+          type: integer
+          description: How many lists match, across every page.
+        page:
+          type: integer
+        limit:
+          type: integer
+    User:
+      type: object
+      required: [username, private, lists]
+      properties:
+        username:
+          type: string
+        name:
+          type: string
+          description: Left out when the profile is private and you're outside its household.
+        private:
+          type: boolean
+        lists:
+          type: array
+          description: The profile's lists that you can see.
+          items:
+            $ref: '#/components/schemas/List'
     NewList:
       type: object
       required: [name]
@@ -2999,9 +3446,24 @@ components:
           description: Episodes aired so far, not counting specials.
         watched:
           type: integer
-          description: How many of those have been watched.
+          description: How many of those have been watched, since the rewatch started if there is one.
         resume:
           $ref: '#/components/schemas/Resume'
+        rewatch_from:
+          type: string
+          format: date-time
+          description: Set while you're rewatching the show. Only plays after it count towards progress.
+    UpcomingEntry:
+      type: object
+      required: [show, episode, watchlist]
+      properties:
+        show:
+          $ref: '#/components/schemas/Title'
+        episode:
+          $ref: '#/components/schemas/Episode'
+        watchlist:
+          type: boolean
+          description: The show is on your watchlist and you haven't started it.
     UpNextListEntry:
       type: object
       required: [list, item_id, position, next]
@@ -3067,6 +3529,10 @@ components:
           description: Numbered in the show's episode order, with specials last. Episodes the order leaves out aren't listed.
           items:
             $ref: '#/components/schemas/SeasonDetail'
+        rewatch_from:
+          type: string
+          format: date-time
+          description: Set while you're rewatching the show. Only plays after it count towards progress.
     TitleRating:
       type: object
       description: Your rating of the film or show itself.
@@ -3126,7 +3592,7 @@ components:
           $ref: '#/components/schemas/Resume'
     Play:
       type: object
-      required: [id, watched_at, action]
+      required: [id, watched_at, precision, action]
       properties:
         id:
           type: integer
@@ -3134,6 +3600,10 @@ components:
         watched_at:
           type: string
           format: date-time
+        precision:
+          type: string
+          enum: [time, day, none]
+          description: How much of `watched_at` is known. With `day` only the date is, and its time is noon UTC. With `none` it was seen at some point nobody recorded, and `watched_at` is 1970-01-01.
         action:
           type: string
           enum: [scrobble, checkin, watch]
@@ -3275,7 +3745,7 @@ components:
           format: int64
         source:
           type: string
-          enum: [trakt]
+          enum: [trakt, simkl, letterboxd]
         filename:
           type: string
         status:
@@ -3311,6 +3781,54 @@ components:
           description: Up to 100 of the items that couldn't be matched, as the file names them.
           items:
             type: string
+    NewImport:
+      type: object
+      required: [source]
+      properties:
+        source:
+          type: string
+          enum: [letterboxd]
+        history:
+          type: array
+          maxItems: 50000
+          items:
+            $ref: '#/components/schemas/ImportedItem'
+        watchlist:
+          type: array
+          maxItems: 50000
+          items:
+            $ref: '#/components/schemas/ImportedItem'
+        ratings:
+          type: array
+          maxItems: 50000
+          items:
+            $ref: '#/components/schemas/ImportedItem'
+    ImportedItem:
+      type: object
+      required: [type, label]
+      properties:
+        type:
+          type: string
+          enum: [movie]
+        tmdb:
+          type: integer
+          format: int32
+        label:
+          type: string
+          maxLength: 300
+          description: The name the export gave it, shown if it can't be matched.
+        at:
+          type: string
+          format: date-time
+          description: When it was watched, listed or rated. Leave it out for a play with no date.
+        precision:
+          type: string
+          enum: [time, day]
+          description: Set `day` when only the date of `at` is known.
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 10
     ImportCount:
       type: object
       required: [total, added, skipped, unmatched]
