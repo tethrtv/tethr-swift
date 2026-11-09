@@ -155,7 +155,7 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
 
 @Test func historyPages() async throws {
     let server = FakeServer([
-        "GET /v1/history": [(200, #"{"items":[{"id":1000000000000,"watched_at":"2024-05-01T20:00:00Z","action":"watch","item":{"type":"movie","title":{"ids":{"tethr":1000000003,"imdb":"tt0133093"},"name":"The Matrix","original_name":"The Matrix","year":1999}}}],"total":3,"page":1,"limit":1}"#)],
+        "GET /v1/history": [(200, #"{"items":[{"id":1000000000000,"watched_at":"2024-05-01T20:00:00Z","precision":"time","action":"watch","item":{"type":"movie","title":{"ids":{"tethr":1000000003,"imdb":"tt0133093"},"name":"The Matrix","original_name":"The Matrix","year":1999}}}],"total":3,"page":1,"limit":1}"#)],
     ])
     let (tethr, _) = signedIn(server)
     let page = try await tethr.history(of: .movie, limit: 1)
@@ -216,7 +216,7 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
 
 @Test func titleDetail() async throws {
     let server = FakeServer([
-        "GET /v1/titles/breaking-bad-2008": [(200, #"{"type":"show","title":{"ids":{"tethr":1000000000,"tmdb":1396},"slug":"breaking-bad-2008","name":"Breaking Bad","year":2008,"runtime_minutes":47},"watches":[],"rating":{"id":1000000000020,"rating":9,"rated_at":"2024-05-01T20:00:00Z"},"seasons":[{"number":1,"episodes":[{"episode":{"ids":{"tethr":1000000001},"season":1,"number":1,"first_aired":"2008-01-20"},"watches":[{"id":1000000000001,"watched_at":"2024-05-01T20:00:00Z","action":"scrobble"}]},{"episode":{"ids":{"tethr":1000000002},"season":1,"number":2},"watches":[],"resume":{"id":1000000000007,"progress":38}}]}]}"#)],
+        "GET /v1/titles/breaking-bad-2008": [(200, #"{"type":"show","title":{"ids":{"tethr":1000000000,"tmdb":1396},"slug":"breaking-bad-2008","name":"Breaking Bad","year":2008,"runtime_minutes":47},"watches":[],"rating":{"id":1000000000020,"rating":9,"rated_at":"2024-05-01T20:00:00Z"},"seasons":[{"number":1,"episodes":[{"episode":{"ids":{"tethr":1000000001},"season":1,"number":1,"first_aired":"2008-01-20"},"watches":[{"id":1000000000001,"watched_at":"2024-05-01T20:00:00Z","precision":"time","action":"scrobble"}]},{"episode":{"ids":{"tethr":1000000002},"season":1,"number":2},"watches":[],"resume":{"id":1000000000007,"progress":38}}]}]}"#)],
         "GET /v1/titles/no-such-show-1999": [(404, #"{"code":"not_found","message":"No such title"}"#)],
     ])
     let (tethr, _) = signedIn(server)

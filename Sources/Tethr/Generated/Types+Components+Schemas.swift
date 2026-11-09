@@ -517,6 +517,18 @@ extension Components {
             internal var id: Swift.Int64
             /// - Remark: Generated from `#/components/schemas/Watch/watched_at`.
             internal var watchedAt: Foundation.Date
+            /// How much of `watched_at` is known. With `day` only the date is, and its time is noon UTC. With `none` it was seen at some point nobody recorded, and `watched_at` is 1970-01-01.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Watch/precision`.
+            internal enum PrecisionPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case time = "time"
+                case day = "day"
+                case none = "none"
+            }
+            /// How much of `watched_at` is known. With `day` only the date is, and its time is noon UTC. With `none` it was seen at some point nobody recorded, and `watched_at` is 1970-01-01.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Watch/precision`.
+            internal var precision: Components.Schemas.Watch.PrecisionPayload
             /// - Remark: Generated from `#/components/schemas/Watch/action`.
             internal enum ActionPayload: String, Codable, Hashable, Sendable, CaseIterable {
                 case scrobble = "scrobble"
@@ -532,22 +544,26 @@ extension Components {
             /// - Parameters:
             ///   - id:
             ///   - watchedAt:
+            ///   - precision: How much of `watched_at` is known. With `day` only the date is, and its time is noon UTC. With `none` it was seen at some point nobody recorded, and `watched_at` is 1970-01-01.
             ///   - action:
             ///   - item:
             internal init(
                 id: Swift.Int64,
                 watchedAt: Foundation.Date,
+                precision: Components.Schemas.Watch.PrecisionPayload,
                 action: Components.Schemas.Watch.ActionPayload,
                 item: Components.Schemas.Item
             ) {
                 self.id = id
                 self.watchedAt = watchedAt
+                self.precision = precision
                 self.action = action
                 self.item = item
             }
             internal enum CodingKeys: String, CodingKey {
                 case id
                 case watchedAt = "watched_at"
+                case precision
                 case action
                 case item
             }
@@ -835,12 +851,16 @@ extension Components {
             ///
             /// - Remark: Generated from `#/components/schemas/UpNextEntry/aired`.
             internal var aired: Swift.Int
-            /// How many of those have been watched.
+            /// How many of those have been watched, since the rewatch started if there is one.
             ///
             /// - Remark: Generated from `#/components/schemas/UpNextEntry/watched`.
             internal var watched: Swift.Int
             /// - Remark: Generated from `#/components/schemas/UpNextEntry/resume`.
             internal var resume: Components.Schemas.Resume?
+            /// Set while you're rewatching the show. Only plays after it count towards progress.
+            ///
+            /// - Remark: Generated from `#/components/schemas/UpNextEntry/rewatch_from`.
+            internal var rewatchFrom: Foundation.Date?
             /// Creates a new `UpNextEntry`.
             ///
             /// - Parameters:
@@ -848,15 +868,17 @@ extension Components {
             ///   - next:
             ///   - lastWatchedAt:
             ///   - aired: Episodes aired so far, not counting specials.
-            ///   - watched: How many of those have been watched.
+            ///   - watched: How many of those have been watched, since the rewatch started if there is one.
             ///   - resume:
+            ///   - rewatchFrom: Set while you're rewatching the show. Only plays after it count towards progress.
             internal init(
                 show: Components.Schemas.Title,
                 next: Components.Schemas.Episode,
                 lastWatchedAt: Foundation.Date,
                 aired: Swift.Int,
                 watched: Swift.Int,
-                resume: Components.Schemas.Resume? = nil
+                resume: Components.Schemas.Resume? = nil,
+                rewatchFrom: Foundation.Date? = nil
             ) {
                 self.show = show
                 self.next = next
@@ -864,6 +886,7 @@ extension Components {
                 self.aired = aired
                 self.watched = watched
                 self.resume = resume
+                self.rewatchFrom = rewatchFrom
             }
             internal enum CodingKeys: String, CodingKey {
                 case show
@@ -872,6 +895,7 @@ extension Components {
                 case aired
                 case watched
                 case resume
+                case rewatchFrom = "rewatch_from"
             }
         }
         /// Where it was paused, if it was started.
@@ -932,6 +956,10 @@ extension Components {
             ///
             /// - Remark: Generated from `#/components/schemas/TitleDetail/seasons`.
             internal var seasons: [Components.Schemas.SeasonDetail]?
+            /// Set while you're rewatching the show. Only plays after it count towards progress.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/rewatch_from`.
+            internal var rewatchFrom: Foundation.Date?
             /// Creates a new `TitleDetail`.
             ///
             /// - Parameters:
@@ -944,6 +972,7 @@ extension Components {
             ///   - lists: Lists in your household that you can see and that the film or show itself is on.
             ///   - episodeOrder: The TMDB episode group the show follows for this profile. Left out, it's aired order.
             ///   - seasons: Numbered in the show's episode order, with specials last. Episodes the order leaves out aren't listed.
+            ///   - rewatchFrom: Set while you're rewatching the show. Only plays after it count towards progress.
             internal init(
                 _type: Components.Schemas.TitleDetail._TypePayload,
                 title: Components.Schemas.Title,
@@ -953,7 +982,8 @@ extension Components {
                 listing: Components.Schemas.TitleListing? = nil,
                 lists: [Components.Schemas.TitleInList]? = nil,
                 episodeOrder: Swift.String? = nil,
-                seasons: [Components.Schemas.SeasonDetail]? = nil
+                seasons: [Components.Schemas.SeasonDetail]? = nil,
+                rewatchFrom: Foundation.Date? = nil
             ) {
                 self._type = _type
                 self.title = title
@@ -964,6 +994,7 @@ extension Components {
                 self.lists = lists
                 self.episodeOrder = episodeOrder
                 self.seasons = seasons
+                self.rewatchFrom = rewatchFrom
             }
             internal enum CodingKeys: String, CodingKey {
                 case _type = "type"
@@ -975,6 +1006,7 @@ extension Components {
                 case lists
                 case episodeOrder = "episode_order"
                 case seasons
+                case rewatchFrom = "rewatch_from"
             }
         }
         /// Your rating of the film or show itself.
@@ -1116,6 +1148,18 @@ extension Components {
             internal var id: Swift.Int64
             /// - Remark: Generated from `#/components/schemas/Play/watched_at`.
             internal var watchedAt: Foundation.Date
+            /// How much of `watched_at` is known. With `day` only the date is, and its time is noon UTC. With `none` it was seen at some point nobody recorded, and `watched_at` is 1970-01-01.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Play/precision`.
+            internal enum PrecisionPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case time = "time"
+                case day = "day"
+                case none = "none"
+            }
+            /// How much of `watched_at` is known. With `day` only the date is, and its time is noon UTC. With `none` it was seen at some point nobody recorded, and `watched_at` is 1970-01-01.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Play/precision`.
+            internal var precision: Components.Schemas.Play.PrecisionPayload
             /// - Remark: Generated from `#/components/schemas/Play/action`.
             internal enum ActionPayload: String, Codable, Hashable, Sendable, CaseIterable {
                 case scrobble = "scrobble"
@@ -1129,19 +1173,23 @@ extension Components {
             /// - Parameters:
             ///   - id:
             ///   - watchedAt:
+            ///   - precision: How much of `watched_at` is known. With `day` only the date is, and its time is noon UTC. With `none` it was seen at some point nobody recorded, and `watched_at` is 1970-01-01.
             ///   - action:
             internal init(
                 id: Swift.Int64,
                 watchedAt: Foundation.Date,
+                precision: Components.Schemas.Play.PrecisionPayload,
                 action: Components.Schemas.Play.ActionPayload
             ) {
                 self.id = id
                 self.watchedAt = watchedAt
+                self.precision = precision
                 self.action = action
             }
             internal enum CodingKeys: String, CodingKey {
                 case id
                 case watchedAt = "watched_at"
+                case precision
                 case action
             }
         }
