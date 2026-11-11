@@ -25,6 +25,10 @@ extension Components {
             internal var kind: Components.Schemas.Profile.KindPayload
             /// - Remark: Generated from `#/components/schemas/Profile/private`.
             internal var _private: Swift.Bool
+            /// This profile's plays count towards Popular on Tethr. Kids' and guest profiles are never counted.
+            ///
+            /// - Remark: Generated from `#/components/schemas/Profile/in_popular`.
+            internal var inPopular: Swift.Bool
             /// Creates a new `Profile`.
             ///
             /// - Parameters:
@@ -33,18 +37,21 @@ extension Components {
             ///   - name:
             ///   - kind:
             ///   - _private:
+            ///   - inPopular: This profile's plays count towards Popular on Tethr. Kids' and guest profiles are never counted.
             internal init(
                 id: Swift.Int64,
                 username: Swift.String,
                 name: Swift.String,
                 kind: Components.Schemas.Profile.KindPayload,
-                _private: Swift.Bool
+                _private: Swift.Bool,
+                inPopular: Swift.Bool
             ) {
                 self.id = id
                 self.username = username
                 self.name = name
                 self.kind = kind
                 self._private = _private
+                self.inPopular = inPopular
             }
             internal enum CodingKeys: String, CodingKey {
                 case id
@@ -52,6 +59,7 @@ extension Components {
                 case name
                 case kind
                 case _private = "private"
+                case inPopular = "in_popular"
             }
         }
         /// - Remark: Generated from `#/components/schemas/Problem`.
