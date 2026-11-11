@@ -41,7 +41,7 @@ final class FakeServer: ClientTransport, @unchecked Sendable {
     }
 }
 
-let profileJSON = #"{"id":7,"username":"nathan-sam","name":"Sam","kind":"person","private":true}"#
+let profileJSON = #"{"id":7,"username":"nathan-sam","name":"Sam","kind":"person","private":true,"in_popular":true}"#
 
 func tokensJSON(_ access: String) -> String {
     #"{"access_token":"\#(access)","token_type":"bearer","expires_in":86400,"refresh_token":"r-\#(access)","scope":"public","created_at":\#(Int(Date().timeIntervalSince1970))}"#

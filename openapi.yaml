@@ -227,7 +227,7 @@ paths:
   /v1/profiles/{id}:
     patch:
       operationId: updateProfile
-      summary: Rename a profile, change its username or privacy
+      summary: Rename a profile, change its username or privacy, or choose whether it counts in Popular on Tethr
       security:
         - session: []
       parameters:
@@ -404,6 +404,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/Me'
         '401':
+          $ref: '#/components/responses/Problem'
+    patch:
+      operationId: updateMe
+      summary: Set the account's time zone or turn the weekly email on or off
+      security:
+        - session: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountChanges'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+  /v1/unsubscribe:
+    post:
+      operationId: unsubscribe
+      summary: Stop the weekly email, using the token from its unsubscribe link
+      description: Needs no session, so mail apps can unsubscribe in one click.
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Unsubscribed
+        '404':
           $ref: '#/components/responses/Problem'
   /v1/export:
     get:
@@ -1327,7 +1365,7 @@ paths:
     post:
       operationId: reportList
       summary: Report a list that breaks the rules
-      description: For public lists from outside your household, except lists made by Tethr. The list leaves browsing until it's been looked at, but still opens for its owner, its followers and anyone with the link. Reporting the same list again before then does nothing. A profile can send up to 20 reports a day.
+      description: For public lists from outside your household, except lists made by Tethr. A report of something illegal or of someone's private details takes the list out of browsing until it's been looked at, and reports from three households do the same for any reason. A list that's been looked at and kept stays in browsing until it changes, and once three of a household's reports in the last year have turned out to be unfounded, its reports stop taking lists out of browsing. Hidden or not, the list still opens for its owner, its followers and anyone with the link. A household can have one report waiting on each list, and reporting the same list again does nothing. Each household can send up to 5 reports a day.
       security:
         - session: []
         - bearer: []
@@ -1715,6 +1753,64 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UpcomingEntry'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /v1/popular:
+    get:
+      operationId: getPopular
+      summary: What people on Tethr are watching this week
+      description: Films and shows played by the most households in the last 7 days, up to 10. A title is only listed once at least 10 households have played it, and counts are rounded down to a multiple of 5. Each household counts once, and only after two weeks on Tethr. Kids' and guest profiles and profiles that have opted out aren't counted, and kids' and guest profiles can't see the list.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+      responses:
+        '200':
+          description: Most households first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PopularTitle'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /v1/years/{year}:
+    get:
+      operationId: getYear
+      summary: A year of watching, added up
+      description: Everything you played in a calendar year, counted by day in the time zone you give. For the current year it runs up to today. Plays with no known date are left out, and plays known only to the day count towards that day but not towards any hour.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: tz
+          in: query
+          description: An IANA time zone such as `Europe/London`. Left out, days run in UTC.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/ProfileId'
+      responses:
+        '200':
+          description: The year so far
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Year'
+        '400':
+          $ref: '#/components/responses/Problem'
         '401':
           $ref: '#/components/responses/Problem'
         '404':
@@ -2502,7 +2598,7 @@ components:
             $ref: '#/components/schemas/Profile'
     Account:
       type: object
-      required: [id, email, name, created_at]
+      required: [id, email, name, created_at, time_zone, weekly_email]
       properties:
         id:
           type: integer
@@ -2514,9 +2610,23 @@ components:
         created_at:
           type: string
           format: date-time
+        time_zone:
+          type: string
+          nullable: true
+          description: An IANA time zone such as Europe/London. The site sets it from the browser when it's empty, and the weekly email uses Europe/London until then.
+        weekly_email:
+          type: boolean
+          description: Whether the account gets the weekly email on Sunday evenings.
+    AccountChanges:
+      type: object
+      properties:
+        time_zone:
+          type: string
+        weekly_email:
+          type: boolean
     Profile:
       type: object
-      required: [id, username, name, kind, private]
+      required: [id, username, name, kind, private, in_popular]
       properties:
         id:
           type: integer
@@ -2530,6 +2640,9 @@ components:
           enum: [owner, person, kids, guest]
         private:
           type: boolean
+        in_popular:
+          type: boolean
+          description: This profile's plays count towards Popular on Tethr. Kids' and guest profiles are never counted.
     Problem:
       type: object
       required: [code, message]
@@ -2559,6 +2672,8 @@ components:
         username:
           type: string
         private:
+          type: boolean
+        in_popular:
           type: boolean
     Invites:
       type: object
@@ -3475,6 +3590,140 @@ components:
         watchlist:
           type: boolean
           description: The show is on your watchlist and you haven't started it.
+    PopularTitle:
+      type: object
+      required: [item, households]
+      properties:
+        item:
+          $ref: '#/components/schemas/Item'
+        households:
+          type: integer
+    Year:
+      type: object
+      required: [year, through, plays, episodes, films, minutes, plays_without_length, new_shows, rewatched, days, hours, shows, film_plays, run, years]
+      properties:
+        year:
+          type: integer
+        through:
+          type: string
+          format: date
+          description: The last day counted. Today for the current year, otherwise 31 December.
+        plays:
+          type: integer
+        episodes:
+          type: integer
+        films:
+          type: integer
+        minutes:
+          type: integer
+          description: Roughly how long it all took, from each play's length where the app sent one and the title's usual runtime otherwise.
+        plays_without_length:
+          type: integer
+          description: Plays with no known length, which add nothing to `minutes`.
+        new_shows:
+          type: integer
+          description: Shows you played for the first time this year.
+        rewatched:
+          type: integer
+          description: Shows and films you went back to, with a play of an episode or film you'd already seen.
+        days:
+          type: array
+          description: One entry per day from 1 January to `through`.
+          items:
+            $ref: '#/components/schemas/YearDay'
+        hours:
+          type: array
+          description: Plays that started in each hour of the day, from midnight.
+          items:
+            type: integer
+        shows:
+          type: array
+          description: Every show you played, most episodes first.
+          items:
+            $ref: '#/components/schemas/YearShow'
+        film_plays:
+          type: array
+          description: Every film you played, in the order you played them.
+          items:
+            $ref: '#/components/schemas/YearFilm'
+        run:
+          $ref: '#/components/schemas/YearRun'
+        busiest:
+          $ref: '#/components/schemas/BusiestDay'
+        first:
+          $ref: '#/components/schemas/Watch'
+        latest:
+          $ref: '#/components/schemas/Watch'
+        years:
+          type: array
+          description: Every year with a dated play, newest first.
+          items:
+            type: integer
+    YearDay:
+      type: object
+      required: [plays, minutes]
+      properties:
+        plays:
+          type: integer
+        minutes:
+          type: integer
+    YearShow:
+      type: object
+      required: [show, episodes, minutes, new]
+      properties:
+        show:
+          $ref: '#/components/schemas/Title'
+        episodes:
+          type: integer
+        minutes:
+          type: integer
+        new:
+          type: boolean
+          description: The first time you played this show was this year.
+    YearFilm:
+      type: object
+      required: [film, watched_at, precision, new, again]
+      properties:
+        film:
+          $ref: '#/components/schemas/Title'
+        watched_at:
+          type: string
+          format: date-time
+        precision:
+          type: string
+          enum: [time, day]
+        new:
+          type: boolean
+          description: The first time you played this film was this year.
+        again:
+          type: boolean
+          description: You'd played this film before.
+    YearRun:
+      type: object
+      description: The longest stretch of days in a row with at least one play.
+      required: [days]
+      properties:
+        days:
+          type: integer
+        from:
+          type: string
+          format: date
+    BusiestDay:
+      type: object
+      description: The day with the most plays, and what you played most that day.
+      required: [date, plays, minutes, item, item_plays]
+      properties:
+        date:
+          type: string
+          format: date
+        plays:
+          type: integer
+        minutes:
+          type: integer
+        item:
+          $ref: '#/components/schemas/Item'
+        item_plays:
+          type: integer
     UpNextListEntry:
       type: object
       required: [list, item_id, position, next]
