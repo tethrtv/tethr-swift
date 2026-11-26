@@ -186,7 +186,7 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
 
 @Test func ratings() async throws {
     let server = FakeServer([
-        "GET /v1/ratings": [(200, #"[{"id":1000000000020,"rating":9,"rated_at":"2024-05-01T20:00:00Z","item":{"type":"movie","title":{"ids":{"tethr":1000000003,"imdb":"tt0133093"}}}}]"#)],
+        "GET /v1/ratings": [(200, #"[{"id":1000000000020,"rating":9,"rated_at":"2024-05-01T20:00:00Z","item":{"type":"movie","title":{"ids":{"tethr":1000000003,"imdb":"tt0133093"}}}},{"id":1000000000021,"rating":8,"rated_at":"2024-05-02T20:00:00Z","item":{"type":"season","title":{"ids":{"tethr":1000000000,"tmdb":1396}},"season":{"ids":{"tethr":1000000005,"tmdb":3572},"number":2}}}]"#)],
         "POST /v1/ratings": [(200, #"{"added":1,"existing":0,"not_found":[{"type":"movie","ids":{"imdb":"tt0816692"}}]}"#)],
         "DELETE /v1/ratings/1000000000020": [(204, "")],
     ])
@@ -194,6 +194,7 @@ func signedIn(_ server: FakeServer, access: String = "a1", expiresIn: TimeInterv
     let ratings = try await tethr.ratings(of: .movie, rated: [9, 10])
     #expect(server.calls[0].query == "type=movie&rating=9,10")
     #expect(ratings.first?.rating == 9)
+    #expect(ratings.last?.item.kind == .season && ratings.last?.item.season == 2)
     #expect(ratings.first?.ratedAt == Date(timeIntervalSince1970: 1_714_593_600))
     #expect(ratings.first?.item.title.ids.imdb == "tt0133093")
 

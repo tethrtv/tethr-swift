@@ -112,7 +112,7 @@ public struct Item: Hashable, Sendable {
     init(_ item: Components.Schemas.Item) {
         kind = Kind(rawValue: item._type.rawValue) ?? .movie
         title = Title(item.title)
-        season = item.season
+        season = item.season?.number
         episode = item.episode.map(Episode.init)
     }
 }

@@ -4148,7 +4148,7 @@ internal enum Operations {
     }
     /// A film or show, with what you've watched, rated and listed
     ///
-    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season in its episode order with specials last.
+    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a slug or a TMDB ID, since a film and a show can share either; without it a film comes first. A show lists every episode Tethr knows of, aired or not, season by season in its episode order with specials last.
     ///
     /// - Remark: HTTP `GET /v1/titles/{id}`.
     /// - Remark: Generated from `#/paths//v1/titles/{id}/get(getTitle)`.
@@ -4352,9 +4352,9 @@ internal enum Operations {
             }
         }
     }
-    /// Search the films and shows you've watched, rated or listed
+    /// Search for films and shows
     ///
-    /// Matches English and original names. Names that start with the words come first. Up to 20 results.
+    /// With `scope=library`, the default, only the films and shows you've watched, rated or listed, with names that start with the words first. With `scope=catalogue`, everything Tethr knows, your own first: then exact names, names that start with the words and names that contain them, the best known first within each. Catalogue search ignores case, spaces, accents, punctuation and a leading The, A or An, needs at least two letters or numbers, and leaves out adult titles (and, on kids profiles, titles with sexual content). English and original names both match. Up to 20 results.
     ///
     /// - Remark: HTTP `GET /v1/search`.
     /// - Remark: Generated from `#/paths//v1/search/get(search)`.
@@ -4369,6 +4369,13 @@ internal enum Operations {
                 internal var profileId: Components.Parameters.ProfileId?
                 /// - Remark: Generated from `#/paths/v1/search/GET/query/q`.
                 internal var q: Swift.String
+                /// - Remark: Generated from `#/paths/v1/search/GET/query/scope`.
+                internal enum ScopePayload: String, Codable, Hashable, Sendable, CaseIterable {
+                    case library = "library"
+                    case catalogue = "catalogue"
+                }
+                /// - Remark: Generated from `#/paths/v1/search/GET/query/scope`.
+                internal var scope: Operations.Search.Input.Query.ScopePayload?
                 /// - Remark: Generated from `#/paths/v1/search/GET/query/type`.
                 internal enum _TypePayload: String, Codable, Hashable, Sendable, CaseIterable {
                     case movie = "movie"
@@ -4381,14 +4388,17 @@ internal enum Operations {
                 /// - Parameters:
                 ///   - profileId: With a session, which profile in the household to use. Left out, it's the owner's. Ignored with an access token, which always uses the profile it was granted for.
                 ///   - q:
+                ///   - scope:
                 ///   - _type:
                 internal init(
                     profileId: Components.Parameters.ProfileId? = nil,
                     q: Swift.String,
+                    scope: Operations.Search.Input.Query.ScopePayload? = nil,
                     _type: Operations.Search.Input.Query._TypePayload? = nil
                 ) {
                     self.profileId = profileId
                     self.q = q
+                    self.scope = scope
                     self._type = _type
                 }
             }
@@ -4465,6 +4475,29 @@ internal enum Operations {
                     default:
                         try throwUnexpectedResponseStatus(
                             expectedStatus: "ok",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Something went wrong; `code` says what
+            ///
+            /// - Remark: Generated from `#/paths//v1/search/get(search)/responses/400`.
+            ///
+            /// HTTP response code: `400 badRequest`.
+            case badRequest(Components.Responses.Problem)
+            /// The associated value of the enum case if `self` is `.badRequest`.
+            ///
+            /// - Throws: An error if `self` is not `.badRequest`.
+            /// - SeeAlso: `.badRequest`.
+            internal var badRequest: Components.Responses.Problem {
+                get throws {
+                    switch self {
+                    case let .badRequest(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "badRequest",
                             response: self
                         )
                     }

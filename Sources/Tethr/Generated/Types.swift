@@ -134,14 +134,14 @@ internal protocol APIProtocol: Sendable {
     func showInUpNext(_ input: Operations.ShowInUpNext.Input) async throws -> Operations.ShowInUpNext.Output
     /// A film or show, with what you've watched, rated and listed
     ///
-    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season in its episode order with specials last.
+    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a slug or a TMDB ID, since a film and a show can share either; without it a film comes first. A show lists every episode Tethr knows of, aired or not, season by season in its episode order with specials last.
     ///
     /// - Remark: HTTP `GET /v1/titles/{id}`.
     /// - Remark: Generated from `#/paths//v1/titles/{id}/get(getTitle)`.
     func getTitle(_ input: Operations.GetTitle.Input) async throws -> Operations.GetTitle.Output
-    /// Search the films and shows you've watched, rated or listed
+    /// Search for films and shows
     ///
-    /// Matches English and original names. Names that start with the words come first. Up to 20 results.
+    /// With `scope=library`, the default, only the films and shows you've watched, rated or listed, with names that start with the words first. With `scope=catalogue`, everything Tethr knows, your own first: then exact names, names that start with the words and names that contain them, the best known first within each. Catalogue search ignores case, spaces, accents, punctuation and a leading The, A or An, needs at least two letters or numbers, and leaves out adult titles (and, on kids profiles, titles with sexual content). English and original names both match. Up to 20 results.
     ///
     /// - Remark: HTTP `GET /v1/search`.
     /// - Remark: Generated from `#/paths//v1/search/get(search)`.
@@ -502,7 +502,7 @@ extension APIProtocol {
     }
     /// A film or show, with what you've watched, rated and listed
     ///
-    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season in its episode order with specials last.
+    /// `id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a slug or a TMDB ID, since a film and a show can share either; without it a film comes first. A show lists every episode Tethr knows of, aired or not, season by season in its episode order with specials last.
     ///
     /// - Remark: HTTP `GET /v1/titles/{id}`.
     /// - Remark: Generated from `#/paths//v1/titles/{id}/get(getTitle)`.
@@ -517,9 +517,9 @@ extension APIProtocol {
             headers: headers
         ))
     }
-    /// Search the films and shows you've watched, rated or listed
+    /// Search for films and shows
     ///
-    /// Matches English and original names. Names that start with the words come first. Up to 20 results.
+    /// With `scope=library`, the default, only the films and shows you've watched, rated or listed, with names that start with the words first. With `scope=catalogue`, everything Tethr knows, your own first: then exact names, names that start with the words and names that contain them, the best known first within each. Catalogue search ignores case, spaces, accents, punctuation and a leading The, A or An, needs at least two letters or numbers, and leaves out adult titles (and, on kids profiles, titles with sexual content). English and original names both match. Up to 20 results.
     ///
     /// - Remark: HTTP `GET /v1/search`.
     /// - Remark: Generated from `#/paths//v1/search/get(search)`.

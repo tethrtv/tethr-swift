@@ -177,7 +177,7 @@ extension Components {
                 case createdAt = "created_at"
             }
         }
-        /// Send whichever IDs you have. Tethr matches on `tethr` first, then TMDB, IMDb and TVDB.
+        /// Send whichever IDs you have. Tethr matches on `tethr` first, then TMDB, IMDb and TVDB, and doesn't match on the others yet. Films and shows come back with every ID Tethr knows, most of them from Wikidata.
         ///
         /// - Remark: Generated from `#/components/schemas/Ids`.
         internal struct Ids: Codable, Hashable, Sendable {
@@ -189,6 +189,40 @@ extension Components {
             internal var imdb: Swift.String?
             /// - Remark: Generated from `#/components/schemas/Ids/tvdb`.
             internal var tvdb: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Ids/wikidata`.
+            internal var wikidata: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Ids/tvmaze`.
+            internal var tvmaze: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Ids/letterboxd`.
+            internal var letterboxd: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Ids/trakt`.
+            internal var trakt: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Ids/trakt_slug`.
+            internal var traktSlug: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Ids/mal`.
+            internal var mal: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Ids/anilist`.
+            internal var anilist: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Ids/anidb`.
+            internal var anidb: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Ids/plex`.
+            internal var plex: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Ids/eidr`.
+            internal var eidr: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Ids/isan`.
+            internal var isan: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Ids/rottentomatoes`.
+            internal var rottentomatoes: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Ids/metacritic`.
+            internal var metacritic: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Ids/netflix`.
+            internal var netflix: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Ids/primevideo`.
+            internal var primevideo: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Ids/disneyplus`.
+            internal var disneyplus: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/Ids/appletv`.
+            internal var appletv: Swift.String?
             /// Creates a new `Ids`.
             ///
             /// - Parameters:
@@ -196,25 +230,93 @@ extension Components {
             ///   - tmdb:
             ///   - imdb:
             ///   - tvdb:
+            ///   - wikidata:
+            ///   - tvmaze:
+            ///   - letterboxd:
+            ///   - trakt:
+            ///   - traktSlug:
+            ///   - mal:
+            ///   - anilist:
+            ///   - anidb:
+            ///   - plex:
+            ///   - eidr:
+            ///   - isan:
+            ///   - rottentomatoes:
+            ///   - metacritic:
+            ///   - netflix:
+            ///   - primevideo:
+            ///   - disneyplus:
+            ///   - appletv:
             internal init(
                 tethr: Swift.Int64? = nil,
                 tmdb: Swift.Int? = nil,
                 imdb: Swift.String? = nil,
-                tvdb: Swift.Int? = nil
+                tvdb: Swift.Int? = nil,
+                wikidata: Swift.String? = nil,
+                tvmaze: Swift.Int? = nil,
+                letterboxd: Swift.String? = nil,
+                trakt: Swift.Int? = nil,
+                traktSlug: Swift.String? = nil,
+                mal: Swift.Int? = nil,
+                anilist: Swift.Int? = nil,
+                anidb: Swift.Int? = nil,
+                plex: Swift.String? = nil,
+                eidr: Swift.String? = nil,
+                isan: Swift.String? = nil,
+                rottentomatoes: Swift.String? = nil,
+                metacritic: Swift.String? = nil,
+                netflix: Swift.String? = nil,
+                primevideo: Swift.String? = nil,
+                disneyplus: Swift.String? = nil,
+                appletv: Swift.String? = nil
             ) {
                 self.tethr = tethr
                 self.tmdb = tmdb
                 self.imdb = imdb
                 self.tvdb = tvdb
+                self.wikidata = wikidata
+                self.tvmaze = tvmaze
+                self.letterboxd = letterboxd
+                self.trakt = trakt
+                self.traktSlug = traktSlug
+                self.mal = mal
+                self.anilist = anilist
+                self.anidb = anidb
+                self.plex = plex
+                self.eidr = eidr
+                self.isan = isan
+                self.rottentomatoes = rottentomatoes
+                self.metacritic = metacritic
+                self.netflix = netflix
+                self.primevideo = primevideo
+                self.disneyplus = disneyplus
+                self.appletv = appletv
             }
             internal enum CodingKeys: String, CodingKey {
                 case tethr
                 case tmdb
                 case imdb
                 case tvdb
+                case wikidata
+                case tvmaze
+                case letterboxd
+                case trakt
+                case traktSlug = "trakt_slug"
+                case mal
+                case anilist
+                case anidb
+                case plex
+                case eidr
+                case isan
+                case rottentomatoes
+                case metacritic
+                case netflix
+                case primevideo
+                case disneyplus
+                case appletv
             }
         }
-        /// A film or show by its IDs, a season by its show and `season`, or an episode by its own IDs or its show, `season` and `number`.
+        /// A film or show by its IDs, a season by its own IDs or its show and `season`, or an episode by its own IDs or its show, `season` and `number`.
         ///
         /// - Remark: Generated from `#/components/schemas/ItemRef`.
         internal struct ItemRef: Codable, Hashable, Sendable {
@@ -321,6 +423,29 @@ extension Components {
                 case runtimeMinutes = "runtime_minutes"
             }
         }
+        /// - Remark: Generated from `#/components/schemas/Season`.
+        internal struct Season: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/Season/ids`.
+            internal var ids: Components.Schemas.Ids
+            /// - Remark: Generated from `#/components/schemas/Season/number`.
+            internal var number: Swift.Int
+            /// Creates a new `Season`.
+            ///
+            /// - Parameters:
+            ///   - ids:
+            ///   - number:
+            internal init(
+                ids: Components.Schemas.Ids,
+                number: Swift.Int
+            ) {
+                self.ids = ids
+                self.number = number
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case ids
+                case number
+            }
+        }
         /// - Remark: Generated from `#/components/schemas/Episode`.
         internal struct Episode: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/Episode/ids`.
@@ -329,6 +454,8 @@ extension Components {
             internal var season: Swift.Int
             /// - Remark: Generated from `#/components/schemas/Episode/number`.
             internal var number: Swift.Int
+            /// Only sent to Tethr's own website. Apps get air dates from TMDB with their own key.
+            ///
             /// - Remark: Generated from `#/components/schemas/Episode/first_aired`.
             internal var firstAired: Swift.String?
             /// - Remark: Generated from `#/components/schemas/Episode/order`.
@@ -339,7 +466,7 @@ extension Components {
             ///   - ids:
             ///   - season:
             ///   - number:
-            ///   - firstAired:
+            ///   - firstAired: Only sent to Tethr's own website. Apps get air dates from TMDB with their own key.
             ///   - order:
             internal init(
                 ids: Components.Schemas.Ids,
@@ -400,10 +527,8 @@ extension Components {
             internal var _type: Components.Schemas.Item._TypePayload
             /// - Remark: Generated from `#/components/schemas/Item/title`.
             internal var title: Components.Schemas.Title
-            /// For a season.
-            ///
             /// - Remark: Generated from `#/components/schemas/Item/season`.
-            internal var season: Swift.Int?
+            internal var season: Components.Schemas.Season?
             /// - Remark: Generated from `#/components/schemas/Item/episode`.
             internal var episode: Components.Schemas.Episode?
             /// Creates a new `Item`.
@@ -411,12 +536,12 @@ extension Components {
             /// - Parameters:
             ///   - _type:
             ///   - title:
-            ///   - season: For a season.
+            ///   - season:
             ///   - episode:
             internal init(
                 _type: Components.Schemas.Item._TypePayload,
                 title: Components.Schemas.Title,
-                season: Swift.Int? = nil,
+                season: Components.Schemas.Season? = nil,
                 episode: Components.Schemas.Episode? = nil
             ) {
                 self._type = _type
@@ -866,6 +991,12 @@ extension Components {
             internal var followerCount: Swift.Int64
             /// - Remark: Generated from `#/components/schemas/List/item_count`.
             internal var itemCount: Swift.Int64
+            /// - Remark: Generated from `#/components/schemas/List/rule`.
+            internal var rule: Components.Schemas.ListRule?
+            /// On a rule list, how many titles match the rule for you. It can be more than the 1,000 the list shows.
+            ///
+            /// - Remark: Generated from `#/components/schemas/List/matched_count`.
+            internal var matchedCount: Swift.Int64?
             /// How many items the profile reading the list has finished. Left out when signed out.
             ///
             /// - Remark: Generated from `#/components/schemas/List/watched_count`.
@@ -884,7 +1015,7 @@ extension Components {
             internal var url: Swift.String
             /// - Remark: Generated from `#/components/schemas/List/created_at`.
             internal var createdAt: Foundation.Date
-            /// Changes when the list's details change, when items are added, removed, reordered or given notes, and when a title or episode on it is merged with another. An app can keep a copy and only fetch the items of lists that have moved on. Your watched progress, a title's name or year, and an episode's number can change without it.
+            /// Changes when the list's details or rule change, when items are added, removed, reordered or given notes, and when a title or episode on it is merged with another. An app can keep a copy and only fetch the items of lists that have moved on, except rule lists, whose titles change without it. Your watched progress, a title's name or year, and an episode's number can change without it.
             ///
             /// - Remark: Generated from `#/components/schemas/List/updated_at`.
             internal var updatedAt: Foundation.Date
@@ -905,12 +1036,14 @@ extension Components {
             ///   - following: Whether the profile reading it follows the list.
             ///   - followerCount:
             ///   - itemCount:
+            ///   - rule:
+            ///   - matchedCount: On a rule list, how many titles match the rule for you. It can be more than the 1,000 the list shows.
             ///   - watchedCount: How many items the profile reading the list has finished. Left out when signed out.
             ///   - coverItemId: The item picked as the list's cover. Left out when none is picked.
             ///   - cover: The picked cover item, or the first four items in list order when none is picked. Fetch their posters from TMDB.
             ///   - url: The list's page on the website, made from its owner's username and its slug.
             ///   - createdAt:
-            ///   - updatedAt: Changes when the list's details change, when items are added, removed, reordered or given notes, and when a title or episode on it is merged with another. An app can keep a copy and only fetch the items of lists that have moved on. Your watched progress, a title's name or year, and an episode's number can change without it.
+            ///   - updatedAt: Changes when the list's details or rule change, when items are added, removed, reordered or given notes, and when a title or episode on it is merged with another. An app can keep a copy and only fetch the items of lists that have moved on, except rule lists, whose titles change without it. Your watched progress, a title's name or year, and an episode's number can change without it.
             internal init(
                 id: Swift.Int64,
                 name: Swift.String,
@@ -926,6 +1059,8 @@ extension Components {
                 following: Swift.Bool,
                 followerCount: Swift.Int64,
                 itemCount: Swift.Int64,
+                rule: Components.Schemas.ListRule? = nil,
+                matchedCount: Swift.Int64? = nil,
                 watchedCount: Swift.Int64? = nil,
                 coverItemId: Swift.Int64? = nil,
                 cover: [Components.Schemas.Item],
@@ -947,6 +1082,8 @@ extension Components {
                 self.following = following
                 self.followerCount = followerCount
                 self.itemCount = itemCount
+                self.rule = rule
+                self.matchedCount = matchedCount
                 self.watchedCount = watchedCount
                 self.coverItemId = coverItemId
                 self.cover = cover
@@ -969,6 +1106,8 @@ extension Components {
                 case following
                 case followerCount = "follower_count"
                 case itemCount = "item_count"
+                case rule
+                case matchedCount = "matched_count"
                 case watchedCount = "watched_count"
                 case coverItemId = "cover_item_id"
                 case cover
@@ -1045,6 +1184,192 @@ extension Components {
                 case total
                 case page
                 case limit
+            }
+        }
+        /// Makes a rule list: its titles are worked out each time it's read, up to 1,000, best known first, and each item's ID is the title's own. Every part given has to match. Watched, rated and watchlist use the data of whoever reads the list and are ignored for anyone signed out. A list made by hand can't be given a rule later. A rule list's titles can be taken out but not added, reordered or given notes. A rule list sorts by rank, title or year.
+        ///
+        /// - Remark: Generated from `#/components/schemas/ListRule`.
+        internal struct ListRule: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ListRule/kind`.
+            internal enum KindPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case movie = "movie"
+                case show = "show"
+            }
+            /// - Remark: Generated from `#/components/schemas/ListRule/kind`.
+            internal var kind: Components.Schemas.ListRule.KindPayload?
+            /// - Remark: Generated from `#/components/schemas/ListRule/genres`.
+            internal var genres: Components.Schemas.RuleValues?
+            /// - Remark: Generated from `#/components/schemas/ListRule/types`.
+            internal var types: Components.Schemas.RuleValues?
+            /// - Remark: Generated from `#/components/schemas/ListRule/studios`.
+            internal var studios: Components.Schemas.RuleValues?
+            /// - Remark: Generated from `#/components/schemas/ListRule/networks`.
+            internal var networks: Components.Schemas.RuleValues?
+            /// - Remark: Generated from `#/components/schemas/ListRule/countries`.
+            internal var countries: Components.Schemas.RuleValues?
+            /// - Remark: Generated from `#/components/schemas/ListRule/languages`.
+            internal var languages: Components.Schemas.RuleValues?
+            /// - Remark: Generated from `#/components/schemas/ListRule/year`.
+            internal var year: Components.Schemas.RuleRange?
+            /// - Remark: Generated from `#/components/schemas/ListRule/runtime`.
+            internal var runtime: Components.Schemas.RuleRange?
+            /// Whether you've played it, any episode for a show.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ListRule/watched`.
+            internal var watched: Swift.Bool?
+            /// Whether you've rated the whole film or show.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ListRule/rated`.
+            internal var rated: Swift.Bool?
+            /// Whether it's on your watchlist.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ListRule/watchlist`.
+            internal var watchlist: Swift.Bool?
+            /// The names of the studios and networks in the rule, by Wikidata ID, for showing it. Sent back, it's ignored.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ListRule/names`.
+            internal struct NamesPayload: Codable, Hashable, Sendable {
+                /// A container of undocumented properties.
+                internal var additionalProperties: [String: Swift.String]
+                /// Creates a new `NamesPayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                internal init(additionalProperties: [String: Swift.String] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+                internal init(from decoder: any Swift.Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+                internal func encode(to encoder: any Swift.Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+            /// The names of the studios and networks in the rule, by Wikidata ID, for showing it. Sent back, it's ignored.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ListRule/names`.
+            internal var names: Components.Schemas.ListRule.NamesPayload?
+            /// Titles taken out of the list, by ID. Taking a title out of a rule list adds it here. Saving the rule without this keeps them out, and saving it with fewer, or none, puts the rest back.
+            ///
+            /// - Remark: Generated from `#/components/schemas/ListRule/left_out`.
+            internal var leftOut: [Swift.Int64]?
+            /// Creates a new `ListRule`.
+            ///
+            /// - Parameters:
+            ///   - kind:
+            ///   - genres:
+            ///   - types:
+            ///   - studios:
+            ///   - networks:
+            ///   - countries:
+            ///   - languages:
+            ///   - year:
+            ///   - runtime:
+            ///   - watched: Whether you've played it, any episode for a show.
+            ///   - rated: Whether you've rated the whole film or show.
+            ///   - watchlist: Whether it's on your watchlist.
+            ///   - names: The names of the studios and networks in the rule, by Wikidata ID, for showing it. Sent back, it's ignored.
+            ///   - leftOut: Titles taken out of the list, by ID. Taking a title out of a rule list adds it here. Saving the rule without this keeps them out, and saving it with fewer, or none, puts the rest back.
+            internal init(
+                kind: Components.Schemas.ListRule.KindPayload? = nil,
+                genres: Components.Schemas.RuleValues? = nil,
+                types: Components.Schemas.RuleValues? = nil,
+                studios: Components.Schemas.RuleValues? = nil,
+                networks: Components.Schemas.RuleValues? = nil,
+                countries: Components.Schemas.RuleValues? = nil,
+                languages: Components.Schemas.RuleValues? = nil,
+                year: Components.Schemas.RuleRange? = nil,
+                runtime: Components.Schemas.RuleRange? = nil,
+                watched: Swift.Bool? = nil,
+                rated: Swift.Bool? = nil,
+                watchlist: Swift.Bool? = nil,
+                names: Components.Schemas.ListRule.NamesPayload? = nil,
+                leftOut: [Swift.Int64]? = nil
+            ) {
+                self.kind = kind
+                self.genres = genres
+                self.types = types
+                self.studios = studios
+                self.networks = networks
+                self.countries = countries
+                self.languages = languages
+                self.year = year
+                self.runtime = runtime
+                self.watched = watched
+                self.rated = rated
+                self.watchlist = watchlist
+                self.names = names
+                self.leftOut = leftOut
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case kind
+                case genres
+                case types
+                case studios
+                case networks
+                case countries
+                case languages
+                case year
+                case runtime
+                case watched
+                case rated
+                case watchlist
+                case names
+                case leftOut = "left_out"
+            }
+        }
+        /// Genres (drama, comedy, documentary, crime, romance, action, thriller, horror, adventure, fantasy, science-fiction, music, mystery, kids, history, biography, western, family, war, soap, reality, talk-and-game, sport, news), types (animated, anime, event, miniseries, short, silent, special, tv-film, web), studios and networks as Wikidata IDs, countries as ISO 3166 codes, or languages as IETF tags. Up to 50 each way.
+        ///
+        /// - Remark: Generated from `#/components/schemas/RuleValues`.
+        internal struct RuleValues: Codable, Hashable, Sendable {
+            /// The title has at least one of these.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RuleValues/any`.
+            internal var any: [Swift.String]?
+            /// The title has none of these.
+            ///
+            /// - Remark: Generated from `#/components/schemas/RuleValues/none`.
+            internal var none: [Swift.String]?
+            /// Creates a new `RuleValues`.
+            ///
+            /// - Parameters:
+            ///   - any: The title has at least one of these.
+            ///   - none: The title has none of these.
+            internal init(
+                any: [Swift.String]? = nil,
+                none: [Swift.String]? = nil
+            ) {
+                self.any = any
+                self.none = none
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case any
+                case none
+            }
+        }
+        /// A year, or a runtime in minutes. Both ends are included.
+        ///
+        /// - Remark: Generated from `#/components/schemas/RuleRange`.
+        internal struct RuleRange: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/RuleRange/from`.
+            internal var from: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/RuleRange/to`.
+            internal var to: Swift.Int?
+            /// Creates a new `RuleRange`.
+            ///
+            /// - Parameters:
+            ///   - from:
+            ///   - to:
+            internal init(
+                from: Swift.Int? = nil,
+                to: Swift.Int? = nil
+            ) {
+                self.from = from
+                self.to = to
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case from
+                case to
             }
         }
         /// - Remark: Generated from `#/components/schemas/ListItem`.
@@ -1312,6 +1637,8 @@ extension Components {
             internal var _type: Components.Schemas.TitleDetail._TypePayload
             /// - Remark: Generated from `#/components/schemas/TitleDetail/title`.
             internal var title: Components.Schemas.Title
+            /// - Remark: Generated from `#/components/schemas/TitleDetail/facts`.
+            internal var facts: Components.Schemas.TitleFacts?
             /// Plays of the film, newest first. Always empty for a show.
             ///
             /// - Remark: Generated from `#/components/schemas/TitleDetail/watches`.
@@ -1322,7 +1649,7 @@ extension Components {
             internal var rating: Components.Schemas.TitleRating?
             /// - Remark: Generated from `#/components/schemas/TitleDetail/listing`.
             internal var listing: Components.Schemas.TitleListing?
-            /// Lists in your household that you can see and that the film or show itself is on.
+            /// Lists in your household that you can see and that the film or show itself is on, including rule lists that show it now. On a rule list, `item_id` is the title's own ID.
             ///
             /// - Remark: Generated from `#/components/schemas/TitleDetail/lists`.
             internal var lists: [Components.Schemas.TitleInList]?
@@ -1343,17 +1670,19 @@ extension Components {
             /// - Parameters:
             ///   - _type:
             ///   - title:
+            ///   - facts:
             ///   - watches: Plays of the film, newest first. Always empty for a show.
             ///   - resume:
             ///   - rating:
             ///   - listing:
-            ///   - lists: Lists in your household that you can see and that the film or show itself is on.
+            ///   - lists: Lists in your household that you can see and that the film or show itself is on, including rule lists that show it now. On a rule list, `item_id` is the title's own ID.
             ///   - episodeOrder: The TMDB episode group the show follows for this profile. Left out, it's aired order.
             ///   - seasons: Numbered in the show's episode order, with specials last. Episodes the order leaves out aren't listed.
             ///   - rewatchFrom: Set while you're rewatching the show. Only plays after it count towards progress.
             internal init(
                 _type: Components.Schemas.TitleDetail._TypePayload,
                 title: Components.Schemas.Title,
+                facts: Components.Schemas.TitleFacts? = nil,
                 watches: [Components.Schemas.Play],
                 resume: Components.Schemas.Resume? = nil,
                 rating: Components.Schemas.TitleRating? = nil,
@@ -1365,6 +1694,7 @@ extension Components {
             ) {
                 self._type = _type
                 self.title = title
+                self.facts = facts
                 self.watches = watches
                 self.resume = resume
                 self.rating = rating
@@ -1377,6 +1707,7 @@ extension Components {
             internal enum CodingKeys: String, CodingKey {
                 case _type = "type"
                 case title
+                case facts
                 case watches
                 case resume
                 case rating
@@ -1385,6 +1716,153 @@ extension Components {
                 case episodeOrder = "episode_order"
                 case seasons
                 case rewatchFrom = "rewatch_from"
+            }
+        }
+        /// What Wikidata says about the film or show. Each one is left out when Wikidata doesn't say.
+        ///
+        /// - Remark: Generated from `#/components/schemas/TitleFacts`.
+        internal struct TitleFacts: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/GenresPayload`.
+            internal enum GenresPayloadPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case drama = "drama"
+                case comedy = "comedy"
+                case documentary = "documentary"
+                case crime = "crime"
+                case romance = "romance"
+                case action = "action"
+                case thriller = "thriller"
+                case horror = "horror"
+                case adventure = "adventure"
+                case fantasy = "fantasy"
+                case scienceFiction = "science-fiction"
+                case music = "music"
+                case mystery = "mystery"
+                case kids = "kids"
+                case history = "history"
+                case biography = "biography"
+                case western = "western"
+                case family = "family"
+                case war = "war"
+                case soap = "soap"
+                case reality = "reality"
+                case talkAndGame = "talk-and-game"
+                case sport = "sport"
+                case news = "news"
+            }
+            /// Tethr's own genres, up to four, ordered by how many of Wikidata's genre values point to each.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/genres`.
+            internal typealias GenresPayload = [Components.Schemas.TitleFacts.GenresPayloadPayload]
+            /// Tethr's own genres, up to four, ordered by how many of Wikidata's genre values point to each.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/genres`.
+            internal var genres: Components.Schemas.TitleFacts.GenresPayload?
+            /// Countries of origin, as ISO 3166 codes.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/countries`.
+            internal var countries: [Swift.String]?
+            /// Original languages, as IETF tags.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/languages`.
+            internal var languages: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/TypeFlagsPayload`.
+            internal enum TypeFlagsPayloadPayload: String, Codable, Hashable, Sendable, CaseIterable {
+                case animated = "animated"
+                case anime = "anime"
+                case event = "event"
+                case miniseries = "miniseries"
+                case short = "short"
+                case silent = "silent"
+                case special = "special"
+                case tvFilm = "tv-film"
+                case web = "web"
+            }
+            /// What else it is, such as anime, a miniseries or a TV film.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/type_flags`.
+            internal typealias TypeFlagsPayload = [Components.Schemas.TitleFacts.TypeFlagsPayloadPayload]
+            /// What else it is, such as anime, a miniseries or a TV film.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/type_flags`.
+            internal var typeFlags: Components.Schemas.TitleFacts.TypeFlagsPayload?
+            /// When a show started, as `2008-01-20`, `2008-01` or `2008` depending on what's known.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/started`.
+            internal var started: Swift.String?
+            /// When a show ended, in the same form. Left out when Wikidata has no end date, as while a show is running.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/ended`.
+            internal var ended: Swift.String?
+            /// The companies that made it.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/studios`.
+            internal var studios: [Components.Schemas.Company]?
+            /// The channels or services it first aired on.
+            ///
+            /// - Remark: Generated from `#/components/schemas/TitleFacts/networks`.
+            internal var networks: [Components.Schemas.Company]?
+            /// Creates a new `TitleFacts`.
+            ///
+            /// - Parameters:
+            ///   - genres: Tethr's own genres, up to four, ordered by how many of Wikidata's genre values point to each.
+            ///   - countries: Countries of origin, as ISO 3166 codes.
+            ///   - languages: Original languages, as IETF tags.
+            ///   - typeFlags: What else it is, such as anime, a miniseries or a TV film.
+            ///   - started: When a show started, as `2008-01-20`, `2008-01` or `2008` depending on what's known.
+            ///   - ended: When a show ended, in the same form. Left out when Wikidata has no end date, as while a show is running.
+            ///   - studios: The companies that made it.
+            ///   - networks: The channels or services it first aired on.
+            internal init(
+                genres: Components.Schemas.TitleFacts.GenresPayload? = nil,
+                countries: [Swift.String]? = nil,
+                languages: [Swift.String]? = nil,
+                typeFlags: Components.Schemas.TitleFacts.TypeFlagsPayload? = nil,
+                started: Swift.String? = nil,
+                ended: Swift.String? = nil,
+                studios: [Components.Schemas.Company]? = nil,
+                networks: [Components.Schemas.Company]? = nil
+            ) {
+                self.genres = genres
+                self.countries = countries
+                self.languages = languages
+                self.typeFlags = typeFlags
+                self.started = started
+                self.ended = ended
+                self.studios = studios
+                self.networks = networks
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case genres
+                case countries
+                case languages
+                case typeFlags = "type_flags"
+                case started
+                case ended
+                case studios
+                case networks
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/Company`.
+        internal struct Company: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/Company/wikidata`.
+            internal var wikidata: Swift.String
+            /// - Remark: Generated from `#/components/schemas/Company/name`.
+            internal var name: Swift.String
+            /// Creates a new `Company`.
+            ///
+            /// - Parameters:
+            ///   - wikidata:
+            ///   - name:
+            internal init(
+                wikidata: Swift.String,
+                name: Swift.String
+            ) {
+                self.wikidata = wikidata
+                self.name = name
+            }
+            internal enum CodingKeys: String, CodingKey {
+                case wikidata
+                case name
             }
         }
         /// Your rating of the film or show itself.
@@ -1466,8 +1944,12 @@ extension Components {
                 case itemId = "item_id"
             }
         }
+        /// `ids` is left out when the show follows another episode order, since its seasons are then the order's own.
+        ///
         /// - Remark: Generated from `#/components/schemas/SeasonDetail`.
         internal struct SeasonDetail: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/SeasonDetail/ids`.
+            internal var ids: Components.Schemas.Ids?
             /// - Remark: Generated from `#/components/schemas/SeasonDetail/number`.
             internal var number: Swift.Int
             /// - Remark: Generated from `#/components/schemas/SeasonDetail/episodes`.
@@ -1475,16 +1957,20 @@ extension Components {
             /// Creates a new `SeasonDetail`.
             ///
             /// - Parameters:
+            ///   - ids:
             ///   - number:
             ///   - episodes:
             internal init(
+                ids: Components.Schemas.Ids? = nil,
                 number: Swift.Int,
                 episodes: [Components.Schemas.EpisodeDetail]
             ) {
+                self.ids = ids
                 self.number = number
                 self.episodes = episodes
             }
             internal enum CodingKeys: String, CodingKey {
+                case ids
                 case number
                 case episodes
             }

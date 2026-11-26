@@ -1038,6 +1038,278 @@ paths:
           $ref: '#/components/responses/Problem'
         '422':
           $ref: '#/components/responses/Problem'
+  /v1/lists/preview:
+    get:
+      operationId: previewRule
+      summary: Try out a rule
+      description: The titles a rule list with this rule would show you, best known first. Each value in the query narrows it down, and repeating one, like `genre=comedy&genre=family`, matches any of them. A title only matches a value Wikidata gives it, so a film with no known runtime isn't under 100 minutes.
+      security:
+        - session: []
+        - bearer: []
+        - {}
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - name: kind
+          in: query
+          schema:
+            type: string
+            enum: [movie, show]
+        - name: genre
+          in: query
+          description: Any of these genres.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+              enum: [drama, comedy, documentary, crime, romance, action, thriller, horror, adventure, fantasy, science-fiction, music, mystery, kids, history, biography, western, family, war, soap, reality, talk-and-game, sport, news]
+        - name: not_genre
+          in: query
+          description: None of these genres.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+              enum: [drama, comedy, documentary, crime, romance, action, thriller, horror, adventure, fantasy, science-fiction, music, mystery, kids, history, biography, western, family, war, soap, reality, talk-and-game, sport, news]
+        - name: type
+          in: query
+          description: Any of these types.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+              enum: [animated, anime, event, miniseries, short, silent, special, tv-film, web]
+        - name: not_type
+          in: query
+          description: None of these types.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+              enum: [animated, anime, event, miniseries, short, silent, special, tv-film, web]
+        - name: studio
+          in: query
+          description: Any of these studios, as Wikidata IDs.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+        - name: not_studio
+          in: query
+          description: None of these studios.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+        - name: network
+          in: query
+          description: Any of these original networks, as Wikidata IDs.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+        - name: not_network
+          in: query
+          description: None of these networks.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+        - name: country
+          in: query
+          description: Any of these countries of origin, as ISO 3166 codes.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+        - name: not_country
+          in: query
+          description: None of these countries.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+        - name: language
+          in: query
+          description: Any of these original languages, as IETF tags.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+        - name: not_language
+          in: query
+          description: None of these languages.
+          style: form
+          explode: true
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: string
+        - name: year_from
+          in: query
+          description: From this year.
+          schema:
+            type: integer
+        - name: year_to
+          in: query
+          description: Up to and including this year.
+          schema:
+            type: integer
+        - name: runtime_from
+          in: query
+          description: At least this many minutes long.
+          schema:
+            type: integer
+        - name: runtime_to
+          in: query
+          description: At most this many minutes long.
+          schema:
+            type: integer
+        - name: watched
+          in: query
+          description: Whether you've played it, any episode for a show. Ignored when signed out.
+          schema:
+            type: boolean
+        - name: rated
+          in: query
+          description: Whether you've rated the whole film or show. Ignored when signed out.
+          schema:
+            type: boolean
+        - name: watchlist
+          in: query
+          description: Whether it's on your watchlist. Ignored when signed out.
+          schema:
+            type: boolean
+        - name: list
+          in: query
+          description: A rule list you can see. The titles taken out of it stay out here too.
+          schema:
+            type: integer
+            format: int64
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: [rank, title, year]
+        - name: sort_how
+          in: query
+          schema:
+            $ref: '#/components/schemas/ListSortHow'
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: 100 by default, and up to 1,000.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The matching titles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RulePreview'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+  /v1/lists/{id}/copy:
+    post:
+      operationId: copyList
+      summary: Keep a copy of a rule list
+      description: Makes a private list of your own with the titles the rule list shows you now, in the same order. The copy is an ordinary list that doesn't change by itself, so you can add, remove and reorder. Only rule lists can be copied.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Up to 100 characters. Without one, the copy takes the rule list's name.
+      responses:
+        '201':
+          description: Made
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/List'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '422':
+          $ref: '#/components/responses/Problem'
+  /v1/companies:
+    get:
+      operationId: searchCompanies
+      summary: Find a studio or network
+      description: Studios and networks whose name has a word starting with `q`, with how many titles each made or first aired. Use their Wikidata IDs in a rule.
+      security:
+        - session: []
+        - bearer: []
+        - {}
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 2
+      responses:
+        '200':
+          description: Up to 20, an exact name first, then those with the most titles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CompanyMatch'
   /v1/lists/{id}:
     get:
       operationId: getList
@@ -1241,6 +1513,7 @@ paths:
     delete:
       operationId: removeFromList
       summary: Take an item off a list
+      description: On a rule list, the title stays out even while it still matches. A rule list can have up to 1,000 titles taken out.
       security:
         - session: []
         - bearer: []
@@ -1251,6 +1524,8 @@ paths:
       responses:
         '204':
           description: Removed
+        '400':
+          $ref: '#/components/responses/Problem'
         '401':
           $ref: '#/components/responses/Problem'
         '403':
@@ -1294,6 +1569,8 @@ paths:
                   removed:
                     type: integer
                     format: int64
+        '400':
+          $ref: '#/components/responses/Problem'
         '401':
           $ref: '#/components/responses/Problem'
         '403':
@@ -1819,7 +2096,7 @@ paths:
     get:
       operationId: getTitle
       summary: A film or show, with what you've watched, rated and listed
-      description: '`id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a TMDB ID, since films and shows share numbers there. A show lists every episode Tethr knows of, aired or not, season by season in its episode order with specials last.'
+      description: '`id` is a Tethr ID, a slug, or `tmdb-` with a TMDB ID. Give `type` with a slug or a TMDB ID, since a film and a show can share either; without it a film comes first. A show lists every episode Tethr knows of, aired or not, season by season in its episode order with specials last.'
       security:
         - session: []
         - bearer: []
@@ -1845,6 +2122,40 @@ paths:
         '401':
           $ref: '#/components/responses/Problem'
         '404':
+          $ref: '#/components/responses/Problem'
+  /v1/titles/{id}/reports:
+    post:
+      operationId: reportTitle
+      summary: Report something wrong with a film or show
+      description: Not for kids or guest profiles. Tethr's details come from Wikidata, so a report never changes anything by itself. Each household can send up to 20 title reports a day.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTitleReport'
+      responses:
+        '204':
+          description: Reported
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '403':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '429':
           $ref: '#/components/responses/Problem'
   /v1/titles/{id}/episode-order:
     put:
@@ -1901,8 +2212,8 @@ paths:
   /v1/search:
     get:
       operationId: search
-      summary: Search the films and shows you've watched, rated or listed
-      description: Matches English and original names. Names that start with the words come first. Up to 20 results.
+      summary: Search for films and shows
+      description: "With `scope=library`, the default, only the films and shows you've watched, rated or listed, with names that start with the words first. With `scope=catalogue`, everything Tethr knows, your own first: then exact names, names that start with the words and names that contain them, the best known first within each. Catalogue search ignores case, spaces, accents, punctuation and a leading The, A or An, needs at least two letters or numbers, and leaves out adult titles (and, on kids profiles, titles with sexual content). English and original names both match. Up to 20 results."
       security:
         - session: []
         - bearer: []
@@ -1913,6 +2224,12 @@ paths:
           required: true
           schema:
             type: string
+        - name: scope
+          in: query
+          schema:
+            type: string
+            enum: [library, catalogue]
+            default: library
         - name: type
           in: query
           schema:
@@ -1927,9 +2244,56 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Item'
+        '400':
+          $ref: '#/components/responses/Problem'
         '401':
           $ref: '#/components/responses/Problem'
         '404':
+          $ref: '#/components/responses/Problem'
+  /v1/match:
+    post:
+      operationId: matchFilms
+      summary: Find films by name and year
+      description: For importing from services that only give a film's name and year. Names are compared ignoring case, spaces, accents, punctuation and a leading The, A or An, reading & as and. English and original names both count. A film matches when exactly one film in Tethr has that name and exactly that year. Candidates are up to 5 films whose names contain it. Exact names come first, then names that start with it, then the rest, the best known first within each. They're sent whether or not one matched. If no film with that name has that year but exactly one is a year earlier or later, that film comes first among the candidates instead of matching. Adult titles are left out. Up to 100 films at a time.
+      security:
+        - session: []
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [films]
+              properties:
+                films:
+                  type: array
+                  minItems: 1
+                  maxItems: 100
+                  items:
+                    type: object
+                    required: [name]
+                    properties:
+                      name:
+                        type: string
+                      year:
+                        type: integer
+      responses:
+        '200':
+          description: One result for each film, in the order sent
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [results]
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FilmMatch'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
           $ref: '#/components/responses/Problem'
   /v1/ratings:
     get:
@@ -2039,11 +2403,11 @@ paths:
       operationId: createImport
       summary: Read a Trakt export or Simkl backup before importing it
       description: |
-        Send the zip from Trakt's data export, or the zip from Simkl's "Download backup", as the body. Tethr reads history, the watchlist, resume points, ratings and hidden items, and keeps them for 24 hours. Nothing is written until the import is applied, so check the counts and the unmatched list first. Everything else in the zip is ignored.
+        Send the zip from Trakt's data export, or the zip from Simkl's "Download backup", as the body. Tethr reads history, the watchlist, resume points, ratings, hidden items and, from Trakt, custom lists, and keeps them for 24 hours. Nothing is written until the import is applied, so check the counts and the unmatched list first. Everything else in the zip is ignored.
 
         Items are matched by their TMDB, IMDb and TVDB IDs. Anything without one of those is listed as unmatched rather than guessed. Simkl lists anime by its own seasons with anime-site IDs only, so anime episodes are listed as unmatched. Plays already in history at the same time are skipped, so importing the same file twice is safe.
 
-        Exports without IDs, like Letterboxd's, are matched first and sent as JSON instead, which is how the website does it. Items without a `tmdb` ID are listed as unmatched.
+        Exports without IDs, like Letterboxd's, are matched first and sent as JSON instead, which is how the website does it. TV Time's export is sent this way too, with shows by their TVDB ID, episodes by the show's TVDB ID with `season` and `number`, and films matched by name and year. Items without a `tethr`, `tmdb` or `tvdb` ID are listed as unmatched. Lists in the JSON become private lists with their films in the order given, or are added to the profile's list of the same name. A rule list is never added to.
       security:
         - session: []
         - bearer: []
@@ -2081,6 +2445,46 @@ paths:
           $ref: '#/components/responses/Problem'
         '413':
           $ref: '#/components/responses/Problem'
+  /v1/imports/mdblist:
+    post:
+      operationId: importMDBList
+      summary: Read someone's MDBList account before importing it
+      description: |
+        MDBList has no export file, so send the person's own MDBList API key instead. Tethr uses it once to read their plays, ratings, watchlist, resume points, dropped and on-hold shows, and their lists, then forgets it. The import is kept for 24 hours and works like an export: nothing is written until it's applied. A big account can take up to a minute and a half to read.
+
+        Dynamic lists come across as they are now and won't refill, so they're marked `snapshot` in the summary.
+      security:
+        - session: []
+        - bearer: []
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MDBListKey'
+      responses:
+        '201':
+          description: The import, ready to apply
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Import'
+        '400':
+          $ref: '#/components/responses/Problem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+        '413':
+          $ref: '#/components/responses/Problem'
+        '429':
+          $ref: '#/components/responses/Problem'
+        '503':
+          $ref: '#/components/responses/Problem'
   /v1/imports/{id}:
     get:
       operationId: getImport
@@ -2113,6 +2517,12 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Id'
         - $ref: '#/components/parameters/ProfileId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyImport'
       responses:
         '202':
           description: Queued
@@ -2120,15 +2530,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Import'
+        '400':
+          $ref: '#/components/responses/Problem'
         '401':
           $ref: '#/components/responses/Problem'
         '404':
+          $ref: '#/components/responses/Problem'
+        '422':
           $ref: '#/components/responses/Problem'
   /v1/imports/{id}/undo:
     post:
       operationId: undoImport
       summary: Take out everything an import added
-      description: Works for 30 days after an import is applied. Plays, ratings and watchlist entries that were already there before the import stay.
+      description: Works for 30 days after an import is applied. Plays, ratings, watchlist and list entries that were already there before the import stay. Lists the import made are deleted unless something else has been added to them since.
       security:
         - session: []
         - bearer: []
@@ -2891,7 +3305,7 @@ components:
           description: Unix seconds.
     Ids:
       type: object
-      description: Send whichever IDs you have. Tethr matches on `tethr` first, then TMDB, IMDb and TVDB.
+      description: Send whichever IDs you have. Tethr matches on `tethr` first, then TMDB, IMDb and TVDB, and doesn't match on the others yet. Films and shows come back with every ID Tethr knows, most of them from Wikidata.
       properties:
         tethr:
           type: integer
@@ -2902,9 +3316,43 @@ components:
           type: string
         tvdb:
           type: integer
+        wikidata:
+          type: string
+        tvmaze:
+          type: integer
+        letterboxd:
+          type: string
+        trakt:
+          type: integer
+        trakt_slug:
+          type: string
+        mal:
+          type: integer
+        anilist:
+          type: integer
+        anidb:
+          type: integer
+        plex:
+          type: string
+        eidr:
+          type: string
+        isan:
+          type: string
+        rottentomatoes:
+          type: string
+        metacritic:
+          type: string
+        netflix:
+          type: string
+        primevideo:
+          type: string
+        disneyplus:
+          type: string
+        appletv:
+          type: string
     ItemRef:
       type: object
-      description: A film or show by its IDs, a season by its show and `season`, or an episode by its own IDs or its show, `season` and `number`.
+      description: A film or show by its IDs, a season by its own IDs or its show and `season`, or an episode by its own IDs or its show, `season` and `number`.
       required: [type]
       properties:
         type:
@@ -2939,6 +3387,14 @@ components:
         runtime_minutes:
           type: integer
           description: From Wikidata. For a show, roughly how long an episode runs.
+    Season:
+      type: object
+      required: [ids, number]
+      properties:
+        ids:
+          $ref: '#/components/schemas/Ids'
+        number:
+          type: integer
     Episode:
       type: object
       required: [ids, season, number]
@@ -2952,6 +3408,7 @@ components:
         first_aired:
           type: string
           format: date
+          description: Only sent to Tethr's own website. Apps get air dates from TMDB with their own key.
         order:
           $ref: '#/components/schemas/OrderNumber'
     OrderNumber:
@@ -2980,8 +3437,7 @@ components:
         title:
           $ref: '#/components/schemas/Title'
         season:
-          type: integer
-          description: For a season.
+          $ref: '#/components/schemas/Season'
         episode:
           $ref: '#/components/schemas/Episode'
     ScrobbleRequest:
@@ -3175,6 +3631,12 @@ components:
         item_count:
           type: integer
           format: int64
+        rule:
+          $ref: '#/components/schemas/ListRule'
+        matched_count:
+          type: integer
+          format: int64
+          description: On a rule list, how many titles match the rule for you. It can be more than the 1,000 the list shows.
         watched_count:
           type: integer
           format: int64
@@ -3197,7 +3659,7 @@ components:
         updated_at:
           type: string
           format: date-time
-          description: Changes when the list's details change, when items are added, removed, reordered or given notes, and when a title or episode on it is merged with another. An app can keep a copy and only fetch the items of lists that have moved on. Your watched progress, a title's name or year, and an episode's number can change without it.
+          description: Changes when the list's details or rule change, when items are added, removed, reordered or given notes, and when a title or episode on it is merged with another. An app can keep a copy and only fetch the items of lists that have moved on, except rule lists, whose titles change without it. Your watched progress, a title's name or year, and an episode's number can change without it.
     ListOwner:
       type: object
       required: [username, official]
@@ -3230,6 +3692,24 @@ components:
           type: string
           description: "`illegal` for anything against the law, `harassment` for threats or abuse, `personal` for someone's private details, `spam` for adverts or scams."
           enum: [illegal, harassment, personal, spam, other]
+        note:
+          type: string
+          description: Anything that helps, up to 500 characters.
+    NewTitleReport:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          description: "`kind` when a film is really a show or the other way round, `link` for a wrong link to another site, `duplicate` when it's the same as another title."
+          enum: [name, year, kind, link, duplicate]
+        provider:
+          type: string
+          description: The site whose link is wrong. Needed with `link`. `tvdb` and `tvmaze` are for shows only, `letterboxd` for films only.
+          enum: [imdb, tmdb, tvdb, tvmaze, letterboxd, mal, anidb, anilist, rottentomatoes, metacritic, appletv, netflix, primevideo, disneyplus, plex]
+        suggestion:
+          type: string
+          description: "What it should be, if you know: the name, the year, `movie` or `show`, or a link or ID on the provider's site (just the ID for `tvdb` and `plex`). Needed with `duplicate`: a link to the other title on Tethr, Wikidata, IMDb or TMDB, or its Wikidata ID."
         note:
           type: string
           description: Anything that helps, up to 500 characters.
@@ -3280,6 +3760,8 @@ components:
           $ref: '#/components/schemas/ListSortBy'
         sort_how:
           $ref: '#/components/schemas/ListSortHow'
+        rule:
+          $ref: '#/components/schemas/ListRule'
     ListChanges:
       type: object
       properties:
@@ -3297,7 +3779,116 @@ components:
         cover_item_id:
           type: integer
           format: int64
-          description: An item on the list to use as its cover. 0 goes back to the first four items.
+          description: An item on the list to use as its cover. 0 goes back to the first four items. Rule lists always use their first four.
+        rule:
+          $ref: '#/components/schemas/ListRule'
+    ListRule:
+      type: object
+      description: "Makes a rule list: its titles are worked out each time it's read, up to 1,000, best known first, and each item's ID is the title's own. Every part given has to match. Watched, rated and watchlist use the data of whoever reads the list and are ignored for anyone signed out. A list made by hand can't be given a rule later. A rule list's titles can be taken out but not added, reordered or given notes. A rule list sorts by rank, title or year."
+      properties:
+        kind:
+          type: string
+          enum: [movie, show]
+        genres:
+          $ref: '#/components/schemas/RuleValues'
+        types:
+          $ref: '#/components/schemas/RuleValues'
+        studios:
+          $ref: '#/components/schemas/RuleValues'
+        networks:
+          $ref: '#/components/schemas/RuleValues'
+        countries:
+          $ref: '#/components/schemas/RuleValues'
+        languages:
+          $ref: '#/components/schemas/RuleValues'
+        year:
+          $ref: '#/components/schemas/RuleRange'
+        runtime:
+          $ref: '#/components/schemas/RuleRange'
+        watched:
+          type: boolean
+          description: Whether you've played it, any episode for a show.
+        rated:
+          type: boolean
+          description: Whether you've rated the whole film or show.
+        watchlist:
+          type: boolean
+          description: Whether it's on your watchlist.
+        names:
+          type: object
+          readOnly: true
+          description: The names of the studios and networks in the rule, by Wikidata ID, for showing it. Sent back, it's ignored.
+          additionalProperties:
+            type: string
+        left_out:
+          type: array
+          description: Titles taken out of the list, by ID. Taking a title out of a rule list adds it here. Saving the rule without this keeps them out, and saving it with fewer, or none, puts the rest back.
+          maxItems: 1000
+          items:
+            type: integer
+            format: int64
+    RuleValues:
+      type: object
+      description: "Genres (drama, comedy, documentary, crime, romance, action, thriller, horror, adventure, fantasy, science-fiction, music, mystery, kids, history, biography, western, family, war, soap, reality, talk-and-game, sport, news), types (animated, anime, event, miniseries, short, silent, special, tv-film, web), studios and networks as Wikidata IDs, countries as ISO 3166 codes, or languages as IETF tags. Up to 50 each way."
+      properties:
+        any:
+          type: array
+          description: The title has at least one of these.
+          items:
+            type: string
+        none:
+          type: array
+          description: The title has none of these.
+          items:
+            type: string
+    RuleRange:
+      type: object
+      description: A year, or a runtime in minutes. Both ends are included.
+      properties:
+        from:
+          type: integer
+        to:
+          type: integer
+    RulePreview:
+      type: object
+      required: [items, matched_count, total, page, limit]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListItem'
+        matched_count:
+          type: integer
+          format: int64
+          description: How many titles match, which can be more than the 1,000 a list shows.
+        names:
+          type: object
+          description: The names of the studios and networks asked for, by Wikidata ID.
+          additionalProperties:
+            type: string
+        total:
+          type: integer
+          description: How many of the shown titles there are, across every page.
+        page:
+          type: integer
+        limit:
+          type: integer
+    CompanyMatch:
+      type: object
+      required: [wikidata, name, studio_of, network_of]
+      properties:
+        wikidata:
+          type: string
+        name:
+          type: string
+        studio_of:
+          type: integer
+          format: int64
+          description: How many titles it made.
+        network_of:
+          type: integer
+          format: int64
+          description: How many titles first aired on it.
     ListItem:
       type: object
       required: [id, rank, listed_at, item]
@@ -3765,6 +4356,8 @@ components:
           enum: [movie, show]
         title:
           $ref: '#/components/schemas/Title'
+        facts:
+          $ref: '#/components/schemas/TitleFacts'
         watches:
           type: array
           description: Plays of the film, newest first. Always empty for a show.
@@ -3778,7 +4371,7 @@ components:
           $ref: '#/components/schemas/TitleListing'
         lists:
           type: array
-          description: Lists in your household that you can see and that the film or show itself is on.
+          description: Lists in your household that you can see and that the film or show itself is on, including rule lists that show it now. On a rule list, `item_id` is the title's own ID.
           items:
             $ref: '#/components/schemas/TitleInList'
         episode_order:
@@ -3793,6 +4386,56 @@ components:
           type: string
           format: date-time
           description: Set while you're rewatching the show. Only plays after it count towards progress.
+    TitleFacts:
+      type: object
+      description: What Wikidata says about the film or show. Each one is left out when Wikidata doesn't say.
+      properties:
+        genres:
+          type: array
+          description: Tethr's own genres, up to four, ordered by how many of Wikidata's genre values point to each.
+          items:
+            type: string
+            enum: [drama, comedy, documentary, crime, romance, action, thriller, horror, adventure, fantasy, science-fiction, music, mystery, kids, history, biography, western, family, war, soap, reality, talk-and-game, sport, news]
+        countries:
+          type: array
+          description: Countries of origin, as ISO 3166 codes.
+          items:
+            type: string
+        languages:
+          type: array
+          description: Original languages, as IETF tags.
+          items:
+            type: string
+        type_flags:
+          type: array
+          description: What else it is, such as anime, a miniseries or a TV film.
+          items:
+            type: string
+            enum: [animated, anime, event, miniseries, short, silent, special, tv-film, web]
+        started:
+          type: string
+          description: When a show started, as `2008-01-20`, `2008-01` or `2008` depending on what's known.
+        ended:
+          type: string
+          description: When a show ended, in the same form. Left out when Wikidata has no end date, as while a show is running.
+        studios:
+          type: array
+          description: The companies that made it.
+          items:
+            $ref: '#/components/schemas/Company'
+        networks:
+          type: array
+          description: The channels or services it first aired on.
+          items:
+            $ref: '#/components/schemas/Company'
+    Company:
+      type: object
+      required: [wikidata, name]
+      properties:
+        wikidata:
+          type: string
+        name:
+          type: string
     TitleRating:
       type: object
       description: Your rating of the film or show itself.
@@ -3830,7 +4473,10 @@ components:
     SeasonDetail:
       type: object
       required: [number, episodes]
+      description: '`ids` is left out when the show follows another episode order, since its seasons are then the order''s own.'
       properties:
+        ids:
+          $ref: '#/components/schemas/Ids'
         number:
           type: integer
         episodes:
@@ -4005,7 +4651,7 @@ components:
           format: int64
         source:
           type: string
-          enum: [trakt, simkl, letterboxd]
+          enum: [trakt, simkl, letterboxd, mdblist, tvtime]
         filename:
           type: string
         status:
@@ -4024,7 +4670,7 @@ components:
           format: date-time
     ImportSummary:
       type: object
-      required: [history, watchlist, playback, ratings, hidden, unmatched]
+      required: [history, watchlist, playback, ratings, hidden, list_entries, lists, list_room, unmatched]
       properties:
         history:
           $ref: '#/components/schemas/ImportCount'
@@ -4036,6 +4682,15 @@ components:
           $ref: '#/components/schemas/ImportCount'
         hidden:
           $ref: '#/components/schemas/ImportCount'
+        list_entries:
+          $ref: '#/components/schemas/ImportCount'
+        lists:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImportListSummary'
+        list_room:
+          type: integer
+          description: How many more lists the profile had room for when the file was read.
         unmatched:
           type: array
           description: Up to 100 of the items that couldn't be matched, as the file names them.
@@ -4047,10 +4702,10 @@ components:
       properties:
         source:
           type: string
-          enum: [letterboxd]
+          enum: [letterboxd, tvtime]
         history:
           type: array
-          maxItems: 50000
+          maxItems: 200000
           items:
             $ref: '#/components/schemas/ImportedItem'
         watchlist:
@@ -4063,16 +4718,115 @@ components:
           maxItems: 50000
           items:
             $ref: '#/components/schemas/ImportedItem'
+        dropped:
+          type: array
+          maxItems: 50000
+          description: Shows the person stopped watching. They're hidden from Up next.
+          items:
+            $ref: '#/components/schemas/ImportedItem'
+        lists:
+          type: array
+          maxItems: 500
+          items:
+            $ref: '#/components/schemas/ImportedList'
+    ImportedList:
+      type: object
+      required: [name, items]
+      properties:
+        name:
+          type: string
+          maxLength: 300
+          description: Cut to 100 characters.
+        description:
+          type: string
+          maxLength: 20000
+          description: HTML and Markdown formatting are taken out, then it's cut to 1,000 characters.
+        items:
+          type: array
+          maxItems: 20000
+          description: In list order. A list holds up to 1,000.
+          items:
+            $ref: '#/components/schemas/ImportedItem'
+    MDBListKey:
+      type: object
+      required: [key]
+      properties:
+        key:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: The API key from the person's MDBList preferences. It isn't stored.
+    ImportListSummary:
+      type: object
+      required: [name, privacy, snapshot, total, added, skipped, unmatched, full, existing, chosen, created]
+      properties:
+        name:
+          type: string
+        privacy:
+          type: string
+          enum: [private, public]
+          description: What a new list gets. Public lists from Trakt and MDBList stay public, except on kids and guest profiles. A list that's added to keeps its own.
+        snapshot:
+          type: boolean
+          description: A list that fills itself on the old service, like an MDBList dynamic list. Its items come across as they are now and won't change.
+        total:
+          type: integer
+        added:
+          type: integer
+        skipped:
+          type: integer
+          description: Already on the list.
+        unmatched:
+          type: integer
+        full:
+          type: integer
+          description: Matched but left out because the list or the profile's lists were full.
+        existing:
+          type: boolean
+          description: The profile already has a custom list (not a rule list) with this name, or an earlier list in this import makes one, so the films are added to it. Earlier lists in the import only count once the lists are chosen.
+        chosen:
+          type: boolean
+        created:
+          type: boolean
+          description: The import made this list. Undoing the import deletes it unless something else has been added to it since.
+    ApplyImport:
+      type: object
+      properties:
+        lists:
+          type: array
+          description: Which of the summary's `lists` to bring across, by position from 0. Leave it out to bring them all.
+          items:
+            type: integer
+            minimum: 0
     ImportedItem:
       type: object
       required: [type, label]
       properties:
         type:
           type: string
-          enum: [movie]
+          enum: [movie, show, episode]
+        tethr:
+          type: integer
+          format: int64
+          description: Tethr's ID for it, from `/v1/match` or search. Used before `tmdb`.
         tmdb:
           type: integer
           format: int32
+        tvdb:
+          type: integer
+          format: int32
+          description: The TVDB ID of the show, for a show or an episode.
+        season:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 3000
+          description: For an episode, with `number`.
+        number:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 100000
         label:
           type: string
           maxLength: 300
@@ -4089,6 +4843,20 @@ components:
           type: integer
           minimum: 1
           maximum: 10
+        notes:
+          type: string
+          maxLength: 5000
+          description: The note on a list entry, cut to 500 characters.
+    FilmMatch:
+      type: object
+      required: [candidates]
+      properties:
+        match:
+          $ref: '#/components/schemas/Item'
+        candidates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
     ImportCount:
       type: object
       required: [total, added, skipped, unmatched]
